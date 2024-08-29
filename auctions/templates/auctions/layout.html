@@ -1,0 +1,69 @@
+{% load static %}
+
+<DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>{% block title %}Auctions{% endblock %}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link href="../../static/auctions/styles.css" rel="stylesheet">
+        <style>
+            body{
+                background-color: rgb(183, 223, 223);
+            }
+            header{
+                margin: 0;
+                padding-bottom: 10px;
+            }
+
+
+            .li{
+                background-color: white;
+                border-radius: 4px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="d-flex justify-content-between">
+                <h1>Auctions</h1>
+                <div>
+                    {% if user.is_authenticated %}
+                        Signed in as <strong>{{ user.username }}</strong>.
+                    {% else %}
+                        Not signed in.
+                    {% endif %}
+                </div>
+            </div>
+        <ul class="nav justify-content-md-end justify-content-center">
+                <li class="nav-item rounded m-1" >
+                    <a class="nav-link li" href="{% url 'index' %}">Active Listings</a>
+                </li>
+                <li class="nav-item rounded m-1" >
+                    <a class="nav-link li" href="{% url 'categories' %}">Categories</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item rounded m-1" >
+                        <a class="nav-link rounded li" href="{% url 'listing' %}">Create Listing</a>
+                    </li>
+                    <li class="nav-item rounded m-1" >
+                        <a class="nav-link li" href="{% url 'watchlist' %}">Watchlist <button  style="background-color: black;color: white;">{{ listings_in_watchlist }}</button></a>
+                    </li>
+                    <li class="nav-item rounded m-1" >
+                        <a class="nav-link li" href="{% url 'logout' %}">Log Out</a>
+                    </li>
+                    
+                    
+                {% else %}
+                    <li class="nav-item rounded m-1" >
+                        <a class="nav-link li" href="{% url 'login' %}">Log In</a>
+                    </li>
+                    <li class="nav-item rounded m-1" >
+                        <a class="nav-link li" href="{% url 'register' %}">Register</a>
+                    </li>
+                {% endif %}
+        </ul>
+        </header>
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>
