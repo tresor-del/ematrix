@@ -1,0 +1,20 @@
+{% extends 'auctions/layout.html' %}
+
+
+{% block title %}Auctions | Categories{% endblock %}
+{% block body %}
+
+<div class="container pt-2 mt-5 border" style="background-color: white;  ">
+    <div class="text-center"  style="height: auto;">
+        <h1 style="color: rgb(75, 196, 196);" >All categories.</h1>
+        <div class="nav">
+            {% for category in categories %}
+            <li class="nav-item m-1 "><a href="{% url 'category_active_listing' category %}">{{ category }}</a></li> | 
+            {% endfor %}
+        </div>
+    </div>
+    <div class="text-center p-3 " style="height: 50px;position: relative;">
+        <h6>© 2024 Auctions</h6>
+    </div>
+</div>
+{% endblock body %}
