@@ -1,0 +1,16 @@
+{% extends "network/layout.html" %}
+
+{% block title %}Social Network| New Post{% endblock %}
+
+{% block body %}
+
+    <h1>New Post</h1>
+
+    <form action="{% url 'new_post' %}" method="post">
+        {% csrf_token %}
+        <textarea name="text" id=""></textarea>
+        <input type="submit" value="Post">
+    </form>
+
+
+{% endblock %}
