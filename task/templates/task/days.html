@@ -1,0 +1,65 @@
+{% extends 'task/layout.html' %}
+
+{% block body %}
+        <nav class="navbar navbar-expand-lg d-flex justify-content-evenly align-items-center">
+            <ul class="navbar ml-auto ">
+                <li class="nav nav-item"><a href="{% url 'tasks' %}" class="nav-link list-by">List by Task</a></li>
+                <li class="nav nav-item m3"><a href="#" class="nav-link">Add New Task</a></li>
+            </ul>
+        </nav>
+
+        {% for due_date, tasks in grouped_tasks.items %}
+            <ul class="list-group">
+                {% if due_date == today.date %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="background-color: aquamarine;">
+                {% else %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="background-color: yellowgreen;">
+                {% endif %}
+                    <span>
+                        {% if due_date == today.date %}
+                            <strong>Today</strong> |
+                        {% else %}
+                        <strong>{{ due_date }}</strong> |
+                        {% endif %} 
+                        <small>{{ tasks|length }} tasks</small>
+                    </span>
+                    <span>
+                        <a href="#" class="btn btn-sm btn-primary m4" data-date="{{ due_date|date:'Y-m-d' }}">Details</a>
+                    </span>
+                </li>
+            </ul>
+        {% endfor %}
+
+        <!-- Modal Template -->
+
+        <div class="modal-body" id="modal-body-content">
+
+
+            </div>
+
+{% endblock %}
+
+<div class="container cent">
+    <div class="title">
+        <h1 class="text-center">eMatrix</h1>
+    </div>
+    <div class="text-center" style="width: 50%;">
+        <h5 class="card-title text-center m-5">Sign In</h5>
+        <form id="login-form" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            {% if message %}
+                <div id="alert-message" class="alert alert-danger " role="alert"> 
+                    {{ message }}
+                </div>
+            {% endif %}
+            <div class="mb-3">
+                <input placeholder="Username" type="text" name="username" class="form-control" id="login-email" autofocus required>
+            </div>
+            <div class="mb-3">
+                <input placeholder="Password" type="password" name="password" class="form-control" id="login-password" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Sign In</button>
+        </form>
+    </div>
+</div>
+</div>

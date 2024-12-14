@@ -1,0 +1,387 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+
+<!-- Toast for Notifications -->
+{% if messages %}
+        {% for message in messages %}
+            <div class="toast-container position-fixed top-0 end-0 p-3 mode">
+                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">Notification</strong>
+                        <small>Juste maintenant</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        <p>{{ message }}</p>
+                    </div>
+                </div>
+            </div>
+            <script>
+                const toastLiveExample = document.getElementById('liveToast');
+                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+
+                toastBootstrap.show();
+
+            </script>
+        {% endfor %}
+    {% endif %}
+
+{% if not page_obj %}
+
+    <!-- If there is no tasks, invite users to create some (handled by React)-->
+    <div id="app"></div>
+
+{% else %}
+
+            <!-- Button to Add New Task -->
+            <div class=" d-flex justify-content-center mt-4">
+                <a href="#" class="btn btn-secondary m-1 m3">
+                    <i class="bi bi-plus-circle me-2"></i>Add New Task
+                </a>
+                <a href="#suggestion" class="btn btn-secondary m-1">
+                    ✨ Suggestions
+                </a>
+            </div>
+            
+    {% for due_date, tasks in page_obj %}
+    
+            <!-- Pagination Links -->
+            <div class="pagination  m-3">
+                <span >
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }} " class="btn" id="r"><i class="bi bi-chevron-left "></i></a>
+                    {% endif %}
+                </span>
+                {% if due_date == today.date %}
+                    <hr><h4 id="today" class="center p-1">{{ today }}</h4><hr>
+                {% else %}
+                    <hr><h4 id="{{ due_date }}" class="center p-3">{{ due_date }} </h4><hr>
+                {% endif %}
+                <span>
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" id="r" class="btn" ><i class="bi bi-chevron-right "></i></a>
+                    {% endif %}
+                </span>
+            </div>
+        
+             <!-- Pages displayed dynamically by React -->
+
+            <!-- Eisenhower Matrix displaying all tasks for the current day (is displayed by default)-->
+            <div class="eisenhower-matrix p-0 div" id="ei">
+                <!-- Important and Urgent -->
+                <div class="matrix-cell urgent-important" style="max-height:400px ; overflow-y: scroll;">
+                    <h6>&#x26A0;&#xFE0F; Important and Urgent</h6> <!-- ⚠️ -->
+                    <p>To do</p>
+                    {% for task in tasks %}
+                        {% if task.priority == 'important and urgent' %}
+                            {% if task.completed %}
+                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
+                                    &#x2705; <!-- ✅ --> {{ task.title }}
+                                </a>
+                            {% else %}
+                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
+                                    &#x23F3; <!-- ⏳ --> {{ task.title }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            
+                <!-- Important but not Urgent -->
+                <div class="matrix-cell not-urgent-important" style="max-height:400px ; overflow-y: scroll;">
+                    <h6>&#x1F6A8; Important but not Urgent</h6> <!-- 🚨 -->
+                    <p>To planify</p>
+                    {% for task in tasks %}
+                        {% if task.priority == 'important but not urgent' %}
+                            {% if task.completed %}
+                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
+                                    &#x2705; <!-- ✅ --> {{ task.title }}
+                                </a>
+                            {% else %}
+                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
+                                    &#x23F3; <!-- ⏳ --> {{ task.title }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            
+                <!-- Not Important but Urgent -->
+                <div class="matrix-cell urgent-not-important" style="max-height:400px ; overflow-y: scroll;">
+                    <h6>&#x23F3; Not Important but Urgent</h6> <!-- ⏳ -->
+                    <p>To delegate</p>
+                    {% for task in tasks %}
+                        {% if task.priority == 'not important but ugent' %}
+                            {% if task.completed %}
+                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
+                                    &#x2705; <!-- ✅ --> {{ task.title }}
+                                </a>
+                            {% else %}
+                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
+                                    &#x1F4E4; <!-- 📤 --> {{ task.title }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            
+                <!-- Not Important and not Urgent -->
+                <div class="matrix-cell not-urgent-not-important" style="max-height:400px ; overflow-y: scroll;"    >
+                    <h6>&#x1F5D1;&#xFE0F; Not Important and Not Urgent</h6> <!-- 🗑️ -->
+                    <p>To delete</p>
+                    {% for task in tasks %}
+                        {% if task.priority == 'not important and not urgent' %}
+                            {% if task.completed %}
+                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
+                                    &#x2705; <!-- ✅ --> {{ task.title }}
+                                </a>
+                            {% else %}
+                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
+                                    &#x1F5D1;&#xFE0F; <!-- 🗑️ --> {{ task.title }}
+                                </a>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+   
+            <!-- Statistic -->
+            {% if due_date == today %}
+                <div class=" mt-2">
+                    <small class="d-none" id="c">{{ today_completed_task_count }}</small>  
+                    <small class="d-none" id="p">{{ today_pending_task_count }}</small>
+                    
+                    <div class="row m-4">
+                        <div class="col-md-12 col-sm-12">
+                            <canvas id="tasksChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            var ctx = document.getElementById('tasksChart').getContext('2d');
+                            const completed_task_count = parseInt(document.getElementById('c').textContent.trim());
+                            const pending_task_count = parseInt(document.getElementById('p').textContent.trim());
+
+                            var tasksChart = new Chart(ctx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: ['Completed', 'Pending'],
+                                    datasets: [{
+                                        label: 'Tasks Statistics',
+                                        data: [completed_task_count, pending_task_count],
+                                        backgroundColor: ['#28a745', '#ffc107']
+                                    }]
+                                },
+                                options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        const total = completed_task_count + pending_task_count;
+                                        const percentage = ((value / total) * 100).toFixed(2);
+                                        return `${tooltipItem.label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+                    
+                    </script>
+                </div>
+            {% endif %}
+
+            <hr class="p-2 m-2">
+
+        <!-- Suggestions for planning -->
+        <h1 class="text-center m-3" id="suggestion">✨ Productivity Suggestions ✨</h1>
+        <div class="container my-4 m-2">
+            <div class="row g-4">
+                <!-- Task to do now -->
+                <div class="col-md-3 p-3 ">
+                    <h4 class="text-danger text-center">🚀 Do it Now:</h4>
+                    <p class="text">These critical tasks demand your immediate attention. Take action now!</p>
+                        {% for due_date, tasks in page_obj %}
+                            {% if  important_urgent_tasks %}
+                                {% for task in  important_urgent_tasks %}
+                                    {% if task.due_date == due_date %}
+                                        - <a  class="text fw-bold" style="text-decoration: none; list-style-type: none;">{{ task.title }}</a>
+                                    {% endif %}
+                                {% endfor %}    
+                            {% endif %}
+                        {% endfor %}
+                </div>
+                
+                <!-- Task to plan -->
+                <div class="col-md-3 p-3 ">
+                    <h4 class="text-primary text-center">📅 Plan It:</h4>
+                    <p class="text">Important but not urgent tasks. Schedule them to stay ahead.</p>
+                        {% for due_date, tasks in page_obj %}
+                            {% if  important_not_urgent_tasks %}
+                                {% for task in  important_not_urgent_tasks %}
+                                    {% if task.due_date == due_date %}
+                                        - <a  class="text fw-bold" style="text-decoration: none; list-style-type: none;">{{ task.title }}</a>
+                                    {% endif %}
+                                {% endfor %}    
+                            {% endif %}
+                        {% endfor %}
+                </div>
+
+                <!-- Task to delegate -->
+                <div class="col-md-3 p-3 ">
+                    <h4 class="text-warning text-center">🤝 Delegate It:</h4>
+                    <p class="text">These urgent tasks can be handled by someone else. Lighten your load!</p>
+                        {% for due_date, tasks in page_obj %}
+                            {% if  not_important_urgent_tasks %}
+                                {% for task in  not_important_urgent_tasks %}
+                                    {% if task.due_date == due_date %}
+                                        - <a  class="text fw-bold" style="text-decoration: none; list-style-type: none;">{{ task.title }}</a>
+                                    {% endif %}
+                                {% endfor %}    
+                            {% endif %}
+                        {% endfor %}
+                </div>
+
+                <!-- Task to delete -->
+                <div class="col-md-3 p-3 ">
+                    <h4 class="text-secondary text-center">🗑️ Eliminate It:</h4>
+                    <p class="text">These tasks add no value. Remove them to focus on what matters.</p>
+                        {% for due_date, tasks in page_obj %}
+                            {% if   not_important_not_urgent_tasks %}
+                                {% for task in   not_important_not_urgent_tasks %}
+                                    {% if task.due_date == due_date %}
+                                        <a  class="text fw-bold" style="text-decoration: none; list-style-type: none;">{{ task.title }}</a>
+                                    {% endif %}
+                                {% endfor %}    
+                            {% endif %}
+                        {% endfor %}
+                </div>
+            </div>
+            <!-- Planning button -->
+            <div class="text-center m-5">
+                <a class="btn btn-outline-primary" href="#"><i class="bi bi-play"></i> Start Planning Today</a>
+            </div>
+        </div>
+                   
+    {% endfor %}
+     
+{% endif %}
+
+<!-- Modal Template for adding New Task, Updating tasks, task details -->
+
+<div class="modal-body" id="modal-body-content"></div>
+
+
+<!-- React -->
+
+<!-- Page displayed when there is no task for current user -->
+<script type="text/babel">
+    function displayModal(content, onCloseCallback) {
+            document.getElementById('modal-body-content').innerHTML = content;
+            const taskModal = new bootstrap.Modal(document.getElementById('taskModal'), { keyboard: false });
+            taskModal.show();
+
+            if (onCloseCallback) {
+                document.querySelector('#form').addEventListener('submit', event => {
+                    event.preventDefault();
+                    onCloseCallback();
+                });
+            }
+        }
+
+        function loadNewTask() {
+            console.log('1')
+            fetch('/tasks/new_task')
+                .then(response => response.text())
+                .then(data => {
+                    displayModal(data);
+                    const dateInput = document.querySelector('#due_date');
+                    const calendarButton = document.querySelector('#calendar-button')
+                    const form = document.getElementById('task-form');
+
+                    flatpickr(dateInput, {
+                        dateFormat: "Y-m-d", // Format de la date
+                        minDate: "today",    // Dates à partir d'aujourd'hui
+                        altInput: true,      // Ajoute un champ stylisé
+                        weekNumbers: true,
+                    });
+                    calendarButton.addEventListener('click', function () {
+                        dateInput._flatpickr.open();
+                    });
+
+                    document.addEventListener("DOMContentLoaded", function () {
+                        const form = document.querySelector('form');
+
+                        form.addEventListener('submit', function (e) {
+                            e.preventDefault();  
+
+                            
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: new FormData(form),
+                            })
+                                .then(response => response.json())
+                                .then(data => {
+                                    console.log(data)
+
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
+                        });
+                    });
+
+
+                    document.getElementById('showToastBtn').addEventListener('click', function () {
+                        const toastLiveExample = document.getElementById('liveToast');
+                        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+                        toastBootstrap.show();  
+                    });
+
+
+                })
+                .catch(error => console.error('Error fetching new task:', error));
+        }
+
+
+    function App() {
+
+        const containerStyle = {
+        marginTop: "150px",
+        };
+
+        return (
+        <div className="container" style={containerStyle}>
+            <div className="row">
+            <div className="col-md-12 d-flex justify-content-center align-items-center">
+                <div className="text-center p-5 w-75">
+                <h1 className="blink mb-3 text-warning">
+                    <i className="bi bi-emoji-frown-fill me-2"></i>Empty!
+                </h1>
+                <p className="mb-3 fs-5">Start adding Tasks or Project to see your progress</p>
+                <p className="text-primary mb-4">Simple and effective!</p>
+                <a className="btn shadow-lg btn-secondary"  onClick={loadNewTask} >
+                    <i className="bi bi-plus-circle me-2"></i> Add New Task
+                </a>
+                </div>
+            </div>
+            </div>
+        </div>
+        );
+    }
+
+    
+    ReactDOM.render(<App />, document.querySelector("#app"));
+</script>
+
+
+{% endblock %}

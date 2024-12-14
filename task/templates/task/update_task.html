@@ -1,0 +1,65 @@
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <!-- Modal Dialog -->
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content shadow-lg mode custom-bg ">
+            <!-- Modal Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="taskModalLabel">
+                    ✏️ Update Task
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <!-- Form for updating a task -->
+                <form method="post" action="{% url 'task:update_task' task.id %}" >
+                    {% csrf_token %}
+                    <button id="id" class="d-none" value="{{ task.id }}"></button>
+                    <div class="mb-3">
+                        <!-- Task Title -->
+                        <label for="id_title" class="form-label fw-bold">📝 Title</label>
+                        {{ form.title }}
+    
+                        <!-- Task Description -->
+                        <label for="id_description" class="form-label fw-bold">🖋️ Description</label>
+                        {{ form.description }}
+    
+                        <!-- Task Due Date -->
+                        <label for="id_due_date" class="form-label fw-bold">📅 Due Date</label>
+                        <div class="input-group">
+                            {{ form.due_date }}
+                            <button type="button" onclick="
+                                const today = today.toLocaleDateString('fr-FR', {
+                                          month: 'long', 
+                                          day: 'numeric', 
+                                          year: 'numeric'
+                                      });;
+                                document.querySelector('#due_date').value = today;
+                            " class="btn btn-link text-decoration-none" id="today-btn">Today</button>
+                            <span class="input-group-text" id="calendar-button" >
+                                <i class="bi bi-calendar"></i>
+                            </span>
+                        </div>
+    
+                        <!-- Task Category -->
+                        <label for="id_category" class="form-label fw-bold">📂 Category</label>
+                        {{ form.category }}
+    
+                        <!-- Task Priority -->
+                        <label for="id_priority" class="form-label fw-bold">⚠️ Priority</label>
+                        {{ form.priority }}
+                    </div>
+    
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-success btn-lg m-1"id="showToastBtn">
+                            <i class="bi bi-check-circle"></i> Update
+                        </button>
+                    </div>
+                  </form>
+            </div>
+        </div>
+    </div>
+</div>
+

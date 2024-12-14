@@ -1,0 +1,151 @@
+
+/* ----------- Global Styles ----------- */
+* {
+    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+}
+
+/* ----------- Variables CSS ----------- */
+:root {
+    --background-color: #fff;
+    --text-color: rgb(26, 24, 24);
+    --primary-color: #007bff;
+    --header-background: #f8f9fa;
+    --important-urgent: #f3bdb9;
+    --not-urgent-important: #e9e296;
+    --urgent-not-important: #03a9f4;
+    --not-urgent-not-important: #ccdd6d;
+    --border-color: rgb(90, 84, 84);
+    --modal-header-color: rgb(116, 116, 240);
+}
+
+.sug-border{
+    border-right: 1px solid var(--text-color) !important;
+}
+
+.dark-mode {
+    --header-background: #121212;
+    --background-color: #202123;
+    --text-color: #E0E0E0;
+    --important-urgent: #bd9c9a;
+    --not-urgent-important: #b1ad83;
+    --urgent-not-important: #4c768a;
+    --not-urgent-not-important: #969c70;
+    --border-color: grey;
+    --modal-header-color: #202123;
+}
+
+/* ----------- Body & Typography ----------- */
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.brand {
+    color: var(--primary-color);
+}
+
+
+/* ----------- Modal Styles ----------- */
+
+.modal-content.custom-bg{
+    background-color: var(--background-color) !important;
+}
+
+.modal-content input, .modal-content textarea, .modal-content select{
+    color: var(--text-color) !important;
+    background-color: var(--background-color) !important;
+
+}
+.modal-content input::placeholder, .modal-content textarea::placeholder, .modal-content select::placeholder{
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+
+/* ----------- Card Styles ----------- */
+.card {
+    background-color: var(--background-color);
+    border-color: var(--border-color) !important;
+}
+
+.card .card-body .card-title {
+    color: var(--border-color) !important;
+}
+
+.card .card-body input {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.card .card-body input::placeholder {
+    color: var(--text-color);
+    opacity: 0.5;
+}
+
+
+@media (max-width: 768px) {
+    .card1 {
+        max-width: 95%;
+    }
+
+    .card1 .title h1 {
+        font-size: 2rem;
+    }
+
+    .card1 .body {
+        font-size: 1rem;
+    }
+}
+
+
+/* ----------- Pagination ----------- */
+.pagination{
+    display: flex;
+    justify-content: space-between; /* Align elements at both ends */
+    align-items: center; /* Center elements vertically */
+    margin-bottom: 20px;
+    padding: 0 10px; /* Add some padding to the sides */
+}
+
+.pagination a {
+    color: var(--text-color);
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.pagination  a:hover {
+    transform: scale(1.2); /* Slightly enlarge the buttons on hover */
+    color: #ffcc00; /* Add a hover color */
+}
+
+
+
+/* ----------- Miscellaneous Styles ----------- */
+.custom-file-btn {
+    display: inline-block;
+    padding: 5px;
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.custom-file-btn:hover {
+    background-color: #0056b3;
+}
+
+.file-name {
+    margin-left: 10px;
+    font-size: 1rem;
+    color: #666;
+}
+
+.hide-img input[type="file"] {
+    display: none;
+}
+

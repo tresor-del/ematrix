@@ -1,0 +1,29 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Collaborations</h3>
+
+    <!-- Search section -->
+    <div class="search-section p-4 ">
+        <h5 class="text">Search for a User to collaborate :</h5>
+        <div class="input-group">
+            <input class="form-control" type="search" name="search" id="search" placeholder="Entrez un nom d'utilisateur...">
+            <button class="btn btn-primary" id="search-button">Search</button>
+        </div>
+        <div id="loading" class="text-center mt-3" style="display: none;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results section -->
+    <div id="results" class="mt-4">
+        <div class="results-container p-3 rounded" >
+            <p class="text-center d-none " id="no-results">No user found.</p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

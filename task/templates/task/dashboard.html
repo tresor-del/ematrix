@@ -1,0 +1,97 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+
+
+    <div class="container my-4 w-75 ">
+        <h1 class="text-center" style="margin: 20px;">Your Tasks and Projects</h1>
+
+        <!-- Summary Section-->
+        
+        <div class="row g-3 m-3 ">
+            <!-- All Tasks -->
+            <div class="col-lg-4 col-sm-12 ">
+                <div class="card text-white bg-primary">
+                    <div class="card-header text-center">Tasks</div>
+                    <div class="card-body">
+                        <p class="card-text text-center">{{ task_count }} &#128189;</p>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Completed Tasks -->
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-white bg-success">
+                    <div class="card-header text-center">Completed Tasks</div>
+                    <div class="card-body">
+                        <p class="card-text text-center" id="ct">{{ completed_task_count }} &#x2705;</p>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Pending Tasks -->
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-white bg-warning">
+                    <div class="card-header text-center">Pending Tasks</div>
+                    <div class="card-body">
+                        <p class="card-text text-center" id="tc">{{ pending_task_count }} &#x23F3;</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <!-- Graphic Section -->
+        <div class="row m-5">
+            <div class="col-md-12 col-sm-12">
+                <canvas id="tasksChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+
+<!-- Script JavaScript for the graphic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var ctx = document.getElementById('tasksChart').getContext('2d');
+            const completed_task_count = parseInt(document.getElementById('ct').textContent.trim());
+            const pending_task_count = parseInt(document.getElementById('tc').textContent.trim());
+
+            var tasksChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Pending'],
+                    datasets: [{
+                        label: 'Tasks Statistics',
+                        data: [completed_task_count, pending_task_count],
+                        backgroundColor: ['#28a745', '#ffc107']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    const value = tooltipItem.raw;
+                                    const total = completed_task_count + pending_task_count;
+                                    const percentage = ((value / total) * 100).toFixed(2);
+                                    return `${tooltipItem.label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+    
+ <!-- Modal Template -->
+    <div class="modal-body" id="modal-body-content">
+    </div>
+{% endblock %}

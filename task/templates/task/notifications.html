@@ -1,0 +1,71 @@
+
+<!-- First Modal: Notifications -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content mode custom-bg">
+      <!-- Modal Header -->
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title" id="taskModalLabel">
+          📬 Unread Notifications
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        {% for notification in notifications %}
+          <div class="alert alert-info d-flex align-items-center">
+            <span class="me-2">🔔</span> 
+            <span id="span" data-id="{{ notification.id }}">{{ notification.message }}</span>
+          </div>
+        {% empty %}
+          <div class="alert alert-info text-center">
+            No notifications
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-outline-danger">
+          🗑️ Delete All
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Second Modal: Tasks -->
+<div class="modal fade" id="ModalToggle2" tabindex="-1" aria-labelledby="exampleModalToggleLabel2" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content  mode custom-bg">
+      <!-- Modal Header -->
+      <div class="modal-header bg-primary">
+        <h5 class="modal-title" id="exampleModalToggleLabel2">Tasks</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        {% for task in tasks %}
+        <div class="alert alert-info d-flex justify-content-between">
+          <span>{{ task.title }}</span>
+          <a href="#" class="delete"  data-id="{{ task.id }}">
+            <i class="bi bi-arrow-bar-right"></i>
+          </a>
+        </div>
+        {% endfor %}
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-bs-target="#taskModal" data-bs-toggle="modal">Back to Notifications</button>
+      </div>
+      <!-- Modal Template -->
+
+      <div class="modal-body" id="modal-body-content">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+

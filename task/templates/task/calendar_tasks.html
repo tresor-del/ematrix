@@ -1,0 +1,98 @@
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <!-- Modal Dialog -->
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content shadow-lg mode custom-bg ">
+            <!-- Modal Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="taskModalLabel">
+                    {{ formatted_date }}
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div class="h mb-5 " >
+                        {% if tasks %}
+                            <div class="dropdown">
+                                    <a class="nav-link dropdown-toggle mr-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        &#x1F3A8; Colors Legend:
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="#" class="dropdown-item">
+                                                <span class="legend urgent-important"></span> 
+                                                &#x26A0;&#xFE0F; <span class="text-danger me-2">Important and Urgent</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item">
+                                                <span class="legend not-urgent-important"></span> 
+                                                &#x1F550; <span class="text-warning me-2">Not Important but Urgent</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item">
+                                                <span class="legend urgent-not-important"></span> 
+                                                &#x2139;&#xFE0F; <span class="text-info me-2">Important and Not Urgent</span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item">
+                                                <span class="legend not-urgent-not-important"></span> 
+                                                &#x25CF; <span class="text-secondary me-2">Not Important and Not Urgent</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                            </div>
+                        {% endif %}
+                        {% for task in tasks %}
+                            <ul class="list-group justify-content-center" >
+                                {% if task.completed %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="background-color: rgb(136, 223, 136);">
+                                        &#x2705; <strong>{{ task.title }}</strong> 
+                                {% elif task.priority == 'important and urgent' %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2 urgent-important">
+                                        &#x26A0;&#xFE0F; <strong>{{ task.title }}</strong> 
+                                {% elif task.priority == 'important but not urgent' %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2 bg-danger not-urgent-important">
+                                        &#x1F6A8; <strong>{{ task.title }}</strong> 
+                                {% elif task.priority == 'not important but ugent' %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2 bg-danger urgent-not-important">
+                                        &#x23F3; <strong>{{ task.title }}</strong> 
+                                {% elif task.priority == 'not important and not urgent' %}
+                                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2 bg-danger not-urgent-not-important">
+                                        &#x25CB; {{ task.title }} 
+                                {% endif %}
+
+                                <span>
+                                    {% if task.completed %}
+                                        <a class="m-3" style="color: black; text-decoration: none;">
+                                            &#x1F7E2; 
+                                        </a>
+                                    {% else %}
+                                        <a class="btn btn-sm btn-primary com" data-id="{{ task.id }}">
+                                            &#x2714;&#xFE0F; <!-- ✔️ --> Mark as Completed
+                                        </a>
+                                    {% endif %}  
+                                    <a class="btn btn-sm btn-primary m" data-id="{{ task.id }}">
+                                        &#x2139;&#xFE0F; <!-- ℹ️ --> Details
+                                    </a>
+                                </span>
+                                </li>
+                            </ul>
+                        {% empty %}
+                            No task ! 
+                            <a href="#" class="btn btn-secondary m-1 m3">
+                                <i class="bi bi-plus-circle me-2"></i>Add New Task
+                            </a>
+                        {% endfor %}
+                    <!-- Modal Template -->
+                    <div class="modal-body" id="modal-body-content">
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>

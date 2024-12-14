@@ -1,0 +1,58 @@
+/* ----------- Eisenhower Matrix ----------- */
+.eisenhower-matrix {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr) !important; /* 1 column by default */
+    gap: 20px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    color: black;
+}
+
+/* Matrix Cells */
+.matrix-cell {
+    border-radius: 5px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.matrix-cell h6 {
+    margin-top: 0;
+    border: 1px solid black;
+    border-radius: 3px;
+    background-color: #cfcfcf;
+    color: black;
+    padding: 5px;
+    font-size: 1rem;
+}
+
+/* Priority Color Codes */
+.urgent-important {
+    background-color: var(--important-urgent) !important;
+}
+
+.not-urgent-important {
+    background-color: var(--not-urgent-important) !important;
+}
+
+.urgent-not-important {
+    background-color: var(--urgent-not-important) !important;
+}
+
+.not-urgent-not-important {
+    background-color: var(--not-urgent-not-important) !important;
+}
+
+
+/* Matrix Responsiveness */
+@media (min-width: 576px) {
+    .eisenhower-matrix {
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 columns for small screens */
+    }
+}
+
+@media (min-width: 992px) {
+    .eisenhower-matrix {
+        grid-template-columns: repeat(4, 1fr) !important; /* 4 columns for large screens */
+    }
+}
