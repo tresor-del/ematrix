@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import CustomUser, Task, Notification
+from .models import CustomUser, Task, Notification, Friends, Project
 # Register your models here.
 
 class TaskAdmin(admin.ModelAdmin):
@@ -9,3 +9,5 @@ class TaskAdmin(admin.ModelAdmin):
 admin.site.register(CustomUser)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Notification)
+admin.site.register(Friends)
+admin.site.register(Project)

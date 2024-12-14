@@ -1,18 +1,17 @@
-// Appliquer immédiatement le mode sombre si activé dans localStorage
+// Apply dark mode if it's activate in localStorage
 const isDarkMode = localStorage.getItem('dark-mode') === 'enabled';
 if (isDarkMode) {
-    document.documentElement.classList.add('dark-mode'); // Applique immédiatement la classe au <html>
+    document.documentElement.classList.add('dark-mode'); 
 }
 
-// Attendre que le DOM soit chargé pour ajouter les événements
 document.addEventListener('DOMContentLoaded', function () {
-    // Récupérer les éléments pertinents
+
+    // variables
     const body = document.documentElement;
     const modeElements = document.querySelectorAll('.mode');
     const modeToggle = document.querySelector('#mode-toggle');
     const dropdowns = document.querySelectorAll('.dropdown');
 
-    // Charger le mode depuis localStorage (déjà appliqué avant le DOMContentLoaded)
     if (isDarkMode) {
         enableDarkMode();
     }

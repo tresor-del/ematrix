@@ -285,101 +285,135 @@
 
 <!-- Page displayed when there is no task for current user -->
 <script type="text/babel">
+    // Fonction pour afficher le modal
     function displayModal(content, onCloseCallback) {
-            document.getElementById('modal-body-content').innerHTML = content;
-            const taskModal = new bootstrap.Modal(document.getElementById('taskModal'), { keyboard: false });
-            taskModal.show();
+        document.getElementById('modal-body-content').innerHTML = content;
+        const taskModal = new bootstrap.Modal(document.getElementById('taskModal'), { keyboard: false });
+        taskModal.show();
 
-            if (onCloseCallback) {
-                document.querySelector('#form').addEventListener('submit', event => {
-                    event.preventDefault();
-                    onCloseCallback();
+        if (onCloseCallback) {
+            document.querySelector('#form').addEventListener('submit', event => {
+                event.preventDefault();
+                onCloseCallback();
+            });
+        }
+    }
+
+    // Fonction pour charger un nouveau formulaire de tâche
+    function loadNewTask() {
+        console.log('Loading new task...');
+        fetch('/tasks/new_task')
+            .then(response => response.text())
+            .then(data => {
+                displayModal(data);
+                const dateInput = document.querySelector('#due_date');
+                const calendarButton = document.querySelector('#calendar-button');
+                const form = document.getElementById('task-form');
+
+                flatpickr(dateInput, {
+                    dateFormat: "Y-m-d", // Format de la date
+                    minDate: "today",    // Dates à partir d'aujourd'hui
+                    altInput: true,      // Champ stylisé
+                    weekNumbers: true,
                 });
-            }
-        }
+                calendarButton.addEventListener('click', function () {
+                    dateInput._flatpickr.open();
+                });
 
-        function loadNewTask() {
-            console.log('1')
-            fetch('/tasks/new_task')
-                .then(response => response.text())
-                .then(data => {
-                    displayModal(data);
-                    const dateInput = document.querySelector('#due_date');
-                    const calendarButton = document.querySelector('#calendar-button')
-                    const form = document.getElementById('task-form');
-
-                    flatpickr(dateInput, {
-                        dateFormat: "Y-m-d", // Format de la date
-                        minDate: "today",    // Dates à partir d'aujourd'hui
-                        altInput: true,      // Ajoute un champ stylisé
-                        weekNumbers: true,
+                // Soumettre le formulaire via AJAX
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        if (data.success) {
+                            // Gérer la tâche ajoutée ou mise à jour
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
                     });
-                    calendarButton.addEventListener('click', function () {
-                        dateInput._flatpickr.open();
-                    });
+                });
 
-                    document.addEventListener("DOMContentLoaded", function () {
-                        const form = document.querySelector('form');
+                // Afficher une notification Toast après ajout
+                document.getElementById('showToastBtn').addEventListener('click', function () {
+                    const toastLiveExample = document.getElementById('liveToast');
+                    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+                    toastBootstrap.show();  
+                });
+            })
+            .catch(error => console.error('Error fetching new task:', error));
+    }
 
-                        form.addEventListener('submit', function (e) {
-                            e.preventDefault();  
-
-                            
-                            fetch(form.action, {
-                                method: 'POST',
-                                body: new FormData(form),
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    console.log(data)
-
-                                })
-                                .catch(error => {
-                                    console.error('Error:', error);
-                                });
-                        });
-                    });
-
-
-                    document.getElementById('showToastBtn').addEventListener('click', function () {
-                        const toastLiveExample = document.getElementById('liveToast');
-                        const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-                        toastBootstrap.show();  
-                    });
-
-
-                })
-                .catch(error => console.error('Error fetching new task:', error));
-        }
-
-
+    // Composant React principal
     function App() {
-
         const containerStyle = {
-        marginTop: "150px",
+            marginTop: "50px",
         };
 
         return (
-        <div className="container" style={containerStyle}>
-            <div className="row">
-            <div className="col-md-12 d-flex justify-content-center align-items-center">
-                <div className="text-center p-5 w-75">
-                <h1 className="blink mb-3 text-warning">
-                    <i className="bi bi-emoji-frown-fill me-2"></i>Empty!
-                </h1>
-                <p className="mb-3 fs-5">Start adding Tasks or Project to see your progress</p>
-                <p className="text-primary mb-4">Simple and effective!</p>
-                <a className="btn shadow-lg btn-secondary"  onClick={loadNewTask} >
-                    <i className="bi bi-plus-circle me-2"></i> Add New Task
-                </a>
+            <div className="container" style={containerStyle}>
+                <div className="row">
+                    <div className="col-md-12 d-flex justify-content-center align-items-center">
+                        <div className="text-center p-5 w-75">
+                            {/* Titre principal avec une animation de clignotement */}
+                            <h1 className="blink mb-3 ">
+                                <i className="bi bi-emoji-frown me-2"></i>
+                            </h1>
+
+                            {/* Explication sur l'état de la page */}
+                            <p className="mb-3 fs-5">
+                                It looks like you haven't added any tasks  yet. This is your task management dashboard.
+                                Start by creating tasks to manage your projects more effectively.
+                            </p>
+
+                            {/* Suggestions pour ajouter des tâches ou des projets */}
+                            <p className="text-primary mb-4">
+                                Simply click the button below to add your first task or project. Tasks will help you keep track of 
+                                deadlines, progress, and priorities in your work or personal life.
+                            </p>
+
+                            {/* Explication sur l'utilité de l'ajout d'une tâche */}
+                            <p className="mb-4 fs-6 text-muted">
+                                Adding a task is easy! When you click on the "Add New Task" button, you will be able to define the 
+                                task's title, description, due date, and other important details.
+                            </p>
+
+                            {/* Bouton pour ajouter une nouvelle tâche */}
+                            <a 
+                                className="btn btn-lg btn-primary shadow-lg"  
+                                onClick={loadNewTask} 
+                                data-bs-toggle="tooltip" 
+                                data-bs-placement="top" 
+                                title="Click to add new task">
+                                <i className="bi bi-plus-circle"></i> Add New Task
+                            </a>
+
+                            {/* Explication sur les fonctionnalités futures */}
+                            <div className="mt-4">
+                                <p className="text-info fs-6">
+                                    As you start adding tasks, you'll see progress updates and statistics on the number of tasks 
+                                    completed versus pending. This will help you stay on track and organized.
+                                </p>
+
+                                <p className="text-danger fs-6">
+                                    Don’t forget to update the status of your tasks as you go! You can mark them as completed or 
+                                    leave them pending based on your progress.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            </div>
-        </div>
         );
-    }
 
+    }
     
+    // Rendre l'application React dans l'élément
     ReactDOM.render(<App />, document.querySelector("#app"));
 </script>
 

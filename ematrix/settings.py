@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['192.168.88.103', 'localhost', '127.0.0.1', '0.0.0.0']
 
 INSTALLED_APPS = [
     'task',
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

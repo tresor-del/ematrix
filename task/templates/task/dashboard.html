@@ -2,17 +2,17 @@
 
 {% block body %}
 
-
-    <div class="container my-4 w-75 ">
+    <div class="container my-4 w-75">
         <h1 class="text-center" style="margin: 20px;">Your Tasks and Projects</h1>
 
         <!-- Summary Section-->
-        
-        <div class="row g-3 m-3 ">
+        <div class="row g-3 m-3">
             <!-- All Tasks -->
-            <div class="col-lg-4 col-sm-12 ">
-                <div class="card text-white bg-primary">
-                    <div class="card-header text-center">Tasks</div>
+            <div class="col-lg-4 col-sm-12">
+                <div class="card text-white bg-primary shadow-lg">
+                    <div class="card-header text-center">
+                        <i class="fas fa-tasks"></i> Tasks
+                    </div>
                     <div class="card-body">
                         <p class="card-text text-center">{{ task_count }} &#128189;</p>
                     </div>
@@ -21,8 +21,10 @@
         
             <!-- Completed Tasks -->
             <div class="col-lg-4 col-md-6 col-sm-12">
-                <div class="card text-white bg-success">
-                    <div class="card-header text-center">Completed Tasks</div>
+                <div class="card text-white bg-success shadow-lg">
+                    <div class="card-header text-center">
+                        <i class="fas fa-check-circle"></i> Completed Tasks
+                    </div>
                     <div class="card-body">
                         <p class="card-text text-center" id="ct">{{ completed_task_count }} &#x2705;</p>
                     </div>
@@ -31,24 +33,35 @@
         
             <!-- Pending Tasks -->
             <div class="col-lg-4 col-md-6 col-sm-12">
-                <div class="card text-white bg-warning">
-                    <div class="card-header text-center">Pending Tasks</div>
+                <div class="card text-white bg-warning shadow-lg">
+                    <div class="card-header text-center">
+                        <i class="fas fa-hourglass-half"></i> Pending Tasks
+                    </div>
                     <div class="card-body">
                         <p class="card-text text-center" id="tc">{{ pending_task_count }} &#x23F3;</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Alert Section for important messages -->
         
 
         <!-- Graphic Section -->
-        <div class="row m-5">
+        {% if task_count > 0 %}
+
+        <div class="row " style="margin-top: 30px !important;">
             <div class="col-md-12 col-sm-12">
                 <canvas id="tasksChart" width="400" height="200"></canvas>
             </div>
         </div>
-    </div>
+        {% else %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Hey {{ request.user }}!</strong> It looks like you haven't added any tasks or projects yet !
+        </div>
+        {% endif %}
 
+    </div>
 
 <!-- Script JavaScript for the graphic -->
     <script>
@@ -90,8 +103,10 @@
             });
         });
     </script>
-    
- <!-- Modal Template -->
+
+    <!-- Modal Template -->
     <div class="modal-body" id="modal-body-content">
     </div>
+
 {% endblock %}
+

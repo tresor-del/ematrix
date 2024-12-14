@@ -24,16 +24,6 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.username
-    
-
-## Task models
-
-class Priority(models.TextChoices):
-        
-        IU = 'important and urgent' ,'Important and Urgent'
-        InU = 'important but not urgent', 'Important but not Urgent'
-        nIU = 'not important but ugent', 'Not important but Urgent'
-        nInU = 'not important and not urgent', 'Not important and not Urgent'
 
 class Category(models.TextChoices):
     STUDY = 'study', 'Study' 
@@ -47,7 +37,38 @@ class Category(models.TextChoices):
     TRAVEL = 'travel', 'Travel' 
     OTHER = 'other', 'Other'
 
+
+## Project models
+
+class Project(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="owned_projects")
+    members = models.ManyToManyField(CustomUser, related_name="projects")
+    created_at = models.DateTimeField(auto_now_add=True)
+    category = models.CharField(
+         max_length=50,
+         choices= Category.choices,
+         null=True,
+         blank=True
+    )
+
+    def __str__(self):
+        return self.name
+    
+## Task models
+
+class Priority(models.TextChoices):
+        
+        IU = 'important and urgent' ,'Important and Urgent'
+        InU = 'important but not urgent', 'Important but not Urgent'
+        nIU = 'not important but ugent', 'Not important but Urgent'
+        nInU = 'not important and not urgent', 'Not important and not Urgent'
+
+
+
 class Task(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user')
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=300, null=True, blank=True)
@@ -91,10 +112,11 @@ class Task(models.Model):
         remaining_time = self.due_date - now
         return remaining_time.days
 
-    
+## Notifications Models 
 
 class Notification(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='receiver')
     message = models.TextField()
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -103,11 +125,15 @@ class Notification(models.Model):
     def __str__(self):
         return f" Notification for {self.user.username} at {self.created_at}"
 
-
+## Collaborations models
 class Friends(models.Model):
-    friends = models.ManyToManyField(CustomUser, related_name='collaborators')
-    
-    
+    user = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
+    friends = models.ManyToManyField('CustomUser', related_name='collaborators')
+
     def __str__(self):
-        return self.friends
-     
+        friends_names = ", ".join([friend.username for friend in self.friends.all()])
+        return f"{self.user.username}'s friends: {friends_names if friends_names else 'No friends'}"
+
+    def get_friends(self):
+        return self.friends.all()
+

@@ -16,19 +16,38 @@ document.addEventListener('DOMContentLoaded', function(){
             noResultsMessage.style.display = 'none';
     
             users.forEach(user => {
-                const userElement = document.createElement('div');
-                userElement.textContent = user.username;
-                userElement.dataset.userId = user.id;
-    
-                // Ajouter un bouton pour inviter
-                const inviteButton = document.createElement('button');
-                inviteButton.textContent = 'Invite';
-                inviteButton.className = 'btn btn-sm btn-success ';
+                // Création de la carte utilisateur
+                const userCard = document.createElement('div');
+                userCard.className = 'card mb-3 shadow-sm';
+                userCard.style.maxWidth = '500px';
+            
+                // Contenu de la carte
+                userCard.innerHTML = `
+                    <div class="row g-0 align-items-center " id='invite-container-{{ user.id }}'>
+                        <div class="col-auto p-3">
+                            <img src={{ user.profile_image.url }} class='rounded-circle' >
+                        </div>
+                        <div class="col">
+                            <div class="card-body p-2">
+                                <h5 class="card-title mb-1">${user.username}</h5>
+                            </div>
+                        </div>
+                        <div class="col-auto me-3">
+                            <button class="btn btn-sm btn-success invite-btn" data-user-id="${user.id}">
+                                <i class="bi bi-person-plus"></i> Invite
+                            </button>
+                        </div>
+                    </div>
+                `;
+            
+                // Ajout de l'événement au bouton
+                const inviteButton = userCard.querySelector('.invite-btn');
                 inviteButton.addEventListener('click', () => inviteUser(user.id));
-    
-                userElement.appendChild(inviteButton);
-                resultsDiv.appendChild(userElement);
+            
+                // Ajout de la carte dans le conteneur des résultats
+                resultsDiv.appendChild(userCard);
             });
+            
         };
     
         // Fonction pour rechercher les utilisateurs
@@ -48,11 +67,16 @@ document.addEventListener('DOMContentLoaded', function(){
                 .then(data => {
                     loadingIndicator.style.display = 'none';
                     displayUsers(data.users);
+                    document.querySelector('#search-button').addEventListener('click',function(){
+                        document.querySelector('#search').value = '';
+                        
+                    })
                 })
                 .catch(error => {
                     loadingIndicator.style.display = 'none';
                     console.error('Erreur :', error);
                     alert('Une erreur s\'est produite lors de la recherche.');
+                    
                 });
         };
     
@@ -64,7 +88,12 @@ document.addEventListener('DOMContentLoaded', function(){
             .then( response => response.json())
             .then( result => {
                 console.log(result)
-                alert(`Invitation envoyée à l'utilisateur avec ID ${userId}`);
+                alert(`Invitation sent successfully`);
+                const container = document.getElementById(`invite-container-${userId}`);
+                        const button = container.querySelector('.invite-btn');
+                        button.innerHTML = `
+                            <i class="bi bi-check-circle text-success"></i> Invitation sent
+                        `;
             })
         };
     

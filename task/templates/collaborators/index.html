@@ -1,29 +1,63 @@
 {% extends 'layouts/layout.html' %}
 
 {% block body %}
-<div class="container mt-5">
-    <h3 class="text-center mb-4">Collaborations</h3>
 
-    <!-- Search section -->
-    <div class="search-section p-4 ">
-        <h5 class="text">Search for a User to collaborate :</h5>
-        <div class="input-group">
-            <input class="form-control" type="search" name="search" id="search" placeholder="Entrez un nom d'utilisateur...">
-            <button class="btn btn-primary" id="search-button">Search</button>
-        </div>
-        <div id="loading" class="text-center mt-3" style="display: none;">
-            <div class="spinner-border text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
+    <div class="container mt-5">
+        <!-- Titre principal -->
+        <h3 class="text-center mb-4 text-primary">Collaborations</h3>
+        <p class="text-center text-secondary">Find and connect with users to work together on exciting projects. Use the search feature to find collaborators, or check out your current friends list on the right.</p>
+
+        <div class="row">
+            <!-- Section principale -->
+            <div class="col-lg-8 border">
+                <!-- Section Recherche -->
+                <div class="search-section p-4 ">
+                    <h5 class="text-secondary">Search for a User to collaborate:</h5>
+                    <div class="input-group mt-2">
+                        <input class="form-control" type="search" name="search" id="search" placeholder="Enter a username...">
+                        
+                        <button class="btn btn-primary" id="search-button">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                    <div id="loading" class="text-center mt-3" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Résultats -->
+                <div id="results" class="mt-4">
+                    <div class="results-container p-3  ">
+                        <p class="text-center d-none text" id="no-results">No user found. Try searching with a different username.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section Amis -->
+            <div class="col-lg-4">
+                <div class="friends-section p-4 border rounded ">
+                    <h5 class="text-secondary">Your Friends</h5>
+                    {% if friends %}
+                    <ul class="list-group mt-3">
+                        {% for friend in friends %}
+                        <li class="list-group-item d-flex align-items-center justify-content-between">
+                            <span>
+                                <i class="bi bi-person-circle text-primary me-2"></i><a href="{% url 'task:profile' friend.id %}">{{ friend.username }}</a>
+                            </span>
+                            <button class="btn btn-sm btn-outline-danger remove-friend" data-id="{{ friend.id }}">
+                                <i class="bi bi-x"></i>
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text text-center mt-3">You haven't added any friends yet. Start collaborating now!</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Results section -->
-    <div id="results" class="mt-4">
-        <div class="results-container p-3 rounded" >
-            <p class="text-center d-none " id="no-results">No user found.</p>
-        </div>
-    </div>
-</div>
 
 {% endblock %}

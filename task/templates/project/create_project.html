@@ -1,0 +1,68 @@
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <!-- Modal Dialog -->
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content shadow-lg mode custom-bg">
+            <!-- Modal Header -->
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="taskModalLabel">
+                    ✏️ New Project
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <!-- Modal Body -->
+              <div class="modal-body">
+                <form method="post" action="{% url 'task:create_project' %}">
+                  {% csrf_token %}
+                  <div class="mb-3">
+                      <!-- Task Title -->
+                      <label for="id_title" class="form-label fw-bold">📝 Title</label>
+                      {{ form.name }}
+  
+                      <!-- Task Description -->
+                      <label for="id_description" class="form-label fw-bold">🖋️ Description</label>
+                      {{ form.description }}
+  
+                      <!-- Task Category -->
+                      <label for="id_category" class="form-label fw-bold">📂 Category</label>
+                      {{ form.category }}
+
+                      <label for="id_category" class="form-label fw-bold">👥 Members</label>
+                      {{ form.members }}
+  
+  
+                  </div>
+  
+                  <!-- Modal -->
+                  <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="successModalLabel">Project Created Successfully</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Your new project has been created successfully! 🎉
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Go to Tasks</button>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  
+                  <!-- Submit Button -->
+                  <button id="showToastBtn" class="btn btn-primary" style="display: none;">Show Toast</button>
+                  <div class="d-flex justify-content-center">
+                      <button class="btn btn-success m-1" type="submit" id="showToastBtn">
+                          <i class="bi bi-check-circle"></i> Create Project
+                      </button>
+                  </div>
+                </form>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+    

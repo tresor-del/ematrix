@@ -16,18 +16,23 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('calendar', views.calendar, name='calendar'),
     path('calendar_tasks/<str:due_date>', views.calendar_tasks, name='calendar_tasks'),
-    path('profile', views.profile_view, name='profile'),
+    path('profile/<int:user_id>', views.profile_view, name='profile'),
+
     # API Routes
     path('task_detail/<int:task_id>', views.task_detail, name='task_detail'),
     path('task/<int:task_id>', views.task, name='task'),
     path('update_task/<int:task_id>', views.update_task, name='update_task'),
     path('tasks/new_task', views.new_task, name='new_task'),
-    path('add_notification/<int:id>', views.send_notificatiion, name='add_notification'),
     path('edit_profile', views.edit_profile, name='edit_profile'),
 
+
     # Notifications
-    #path('notifications', views.get_notifications, name='get_notifications'),
+
     path('notifications', views.notifications, name='notifications'),
+    # API Routes
+    path('delete_notification/<int:notification_id>', views.delete_notification, name='delete_notification'),
+    path('delete_all_notification', views.delete_all_notification, name='delete_all_notification'),
+
 
     #Collaboration
 
@@ -35,8 +40,12 @@ urlpatterns = [
     # API Routes
     path('collaborations/search_users', views.search_users, name='search_user'),
     path('invite_user/<int:user_id>', views.invite_user, name='invite_user'),
+    path('confirm_invitation/<int:user_id>', views.confirm_invitation, name='confirm_invitation'),
 
     #Project
-    path('project', views.project, name='project')
+
+    path('project', views.project, name='project'),
+    #API routes
+    path('create_project', views.create_project, name='create_project')
 
 ]

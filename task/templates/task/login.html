@@ -33,6 +33,16 @@
                         <input placeholder="Password" type="password" name="password" class="form-control" id="login-password" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Sign In</button>
+                    <div id="signInloading" class="text-center mt-1" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <script>
+                        document.querySelector('#submit').addEventListener('click', function(){
+                            document.querySelector('#signInLoading').style.display = 'block'
+                        })
+                    </script>
                 </form>
             </div>
         </div>

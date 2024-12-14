@@ -39,7 +39,7 @@
 body {
     background-color: var(--background-color);
     color: var(--text-color);
-    transition: background-color 0.3s, color 0.3s;
+    transition: all 1s ease-in-out;
 }
 
 .brand {

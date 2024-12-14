@@ -6,31 +6,23 @@
     background-color: var(--background-color) !important; 
     box-shadow: 0 1px 1px var(--text-color);
     width: 250px;
-    transition: all 0.3s ease-in-out;
+    transition: all 1s ease-in-out;
 }
 
 .navbar1 .nav-link{
-    color: var(--text-color) !important;
-    background-color: var(--background-color);
+    color: var(--text-color) ;
 }
 
-.navbar1 .n:hover{
-    border-bottom: #0056b3 !important;
-}
 
 .ac{
-    border-bottom: 2px solid var(--primary-color); 
-    color: var(--primary-color);
-}
-
-
-.n{
-    margin-right: 3px;
+    border-left: 2px solid var(--primary-color); 
+    color: var(--primary-color) !important;
 }
 
 .n:hover{
-    border-bottom: 1px solid var(--primary-color);
+    color: var(--primary-color) !important;
 }
+
 
 
 @media (min-width: 992px) {

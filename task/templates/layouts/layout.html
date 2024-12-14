@@ -39,10 +39,13 @@
     <!-- JS Link -->
         <script src="../../static/task/javascript/tasks/dark_or_light.js"></script>
         <script src="../../static/task/javascript/tasks/calendar.js"></script>
-        <script src="{% static 'task/javascript/tasks/displayNotification.js' %}"></script>
+        <script src="{% static 'task/javascript/tasks/notifications.js' %}"></script>
+        <script src="{% static 'task/javascript/tasks/deleteAllNotification.js' %}"></script>
+        <script src="{% static 'task/javascript/tasks/deleteSingleNotification.js' %}"></script>
         <script src="../../static/task/javascript/tasks/events.js"></script>
         <script src="{% static 'task/javascript/collaborations/searchUser.js' %}"></script>
         <script src="{% static 'task/javascript/tasks/navigation.js' %}"></script>
+        <script src="{% static 'task/javascript/projects/create_project.js' %}"></script>
 </head>
 <body class="d-flex flex-column min-vh-100 " id="body">
 
@@ -107,14 +110,14 @@
                 
                     <!-- Notifications -->
                     <li class="nav-item">
-                        <a class="nav-link m4 "  id="notificationsButton" style="cursor: pointer;">
-                            <i class="bi bi-bell me-2"></i>Notifications{% if notifications|length %}<span class="badge text-bg-danger m-1">{{ notifications|length }}</span>{% endif %}
+                        <a href="{% url 'task:notifications' %}" class="nav-link m4 n" >
+                            <i class="bi bi-bell me-2"></i>Notifications {% if notifications %}<span class="badge text-bg-secondary">{{ notifications|length }}</span>{% endif %}
                         </a>
                     </li>
                 
                     <!-- Profile Link -->
                     <li class="nav-item">
-                        <a class="nav-link n" href="{% url 'task:profile' %}">
+                        <a class="nav-link n" href="{% url 'task:profile' user.id %}">
                             <i class="bi bi-person-circle me-2"></i>Profile
                         </a>
                     </li>
@@ -217,7 +220,7 @@
 
                     <!-- Profile Link -->
                     <li class="nav-item">
-                        <a class="nav-link n" href="{% url 'task:profile' %}">
+                        <a class="nav-link n" href="{% url 'task:profile' user.id %}">
                             <i class="bi bi-person-circle me-2"></i>Profile
                         </a>
                     </li>

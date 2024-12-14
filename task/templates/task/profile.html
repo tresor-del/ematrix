@@ -34,7 +34,7 @@
             <div class="profile-image d-flex justify-content-center">
                 <div class="">
                     {% if user.profile_image %}
-                    <img src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-circle " width="150" height="150">
+                    <img src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-circle border " width="150" height="150">
                 {% else %}
                     <img src="../../../media/images/profile.jpg" alt="Profile Image" class="rounded-circle " width="150" height="150">
                 {% endif %}
@@ -43,15 +43,24 @@
             <div class="profile-details mt-3 text-center">
                 <h2>{{ user.username }}</h2>
                 <p class="text">{{ user.email }}</p>
+                {% if request.user == user.username %}
+                <div class="mt-4">
+                    <p><strong>Completed Tasks:</strong> {{ completed_task_count }}</p>
+                    <p><strong>Active Tasks:</strong> {{ pending_task_count }}</p>  
+                </div>
                 <div class="mt-3">
                     <a href="#" class="btn btn-outline-primary "  id="bp" data-id="edit-profile">Edit Profile</a>
                     <a href="#" class="btn btn-outline-secondary">SETTINGS</a>
                 </div>
+                {% else %}
+                <div class="mt-3">
+                    <a href="#" class="btn btn-outline-primary " >Invite to a project</a>
+                    <a href="#" class="btn btn-outline-secondary">Invite to a task</a>
+                </div>
+                {% endif %}
             </div>
         </div>
-
-        
-        
+     
             </div>
         </div>
     </div>

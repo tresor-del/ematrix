@@ -11,12 +11,11 @@ from django.utils import timezone
 from collections import defaultdict
 from datetime import date,datetime
 from django.db.models import ExpressionWrapper, F,  IntegerField
-from .utils import  send_notificatiion, check_and_notify_past_due_tasks, clean_date
 from django.contrib import messages
 from django.db.models import Q
 
-from .forms import TaskForm
-from .models import CustomUser, Task, Notification
+from .forms import TaskForm, ProjectForm
+from .models import CustomUser, Task, Notification, Friends, Project
 
 
 
@@ -254,24 +253,46 @@ def dashboard(request):
 
 @csrf_exempt
 def notifications(request):
-    if request.method == 'PUT':
-        data= json.loads(request.body)
-        if data :
-            id = data['id']
-            is_read = data['is_read']
-            notification = get_object_or_404(Notification, pk=id)
-            notification.is_read = is_read
-    notifications = Notification.objects.filter(user=request.user).all()
-    return render(request, 'task/notifications.html',{
-        'notifications': notifications
-    })
+    all_notifications = Notification.objects.filter(user=request.user)
 
+    if all_notifications.exists():
+        all_notifications.update(is_read=True)
+        return render(request, 'task/notifications.html',{
+            'all_notifications': all_notifications,
+            'notifications': notifications
+        })
 
+    else:
+    # Gérer le cas où l'utilisateur n'a pas de notifications à marquer
+        print("Aucune notification à mettre à jour.")
+        return render(request, 'task/notifications.html',{
+            'notifications': notifications,
+            'all_notifications': all_notifications
+        })
+
+@csrf_exempt
+def delete_notification(request, notification_id):
+    # Fetch the task object using the task_id or return 404 if not found
+    notification = get_object_or_404(Notification, id=notification_id)
+    
+    # Ensure that the request method is POST (delete operation)
+    if request.method == 'POST':
+        notification.delete()  # Delete the task from the database
+        
+        # Return a JSON response to indicate success
+        return JsonResponse({'success': True}, status=200)
+
+@csrf_exempt
+def delete_all_notification(request):
+    notifications = Notification.objects.filter(user=request.user)
+    for notification in notifications:
+        notification.delete()
+    return JsonResponse({'success':True}, status=200)
 
 #Calendar views
 
 def calendar(request):
-    notifications = Notification.objects.filter(user=request.user).all()
+    notifications = Notification.objects.filter(user=request.user, is_read=False).all()
     return render(request, 'task/calendar.html', {
         'notifications': notifications
     })
@@ -282,12 +303,26 @@ def calendar_tasks(request, due_date):
 
 #Profile views
 
-def profile_view(request):
-    user = request.user
+def profile_view(request, user_id):
+    user = get_object_or_404(CustomUser, pk=user_id)
     notifications = Notification.objects.filter(user=request.user, is_read=False).all()
+    tasks = Task.objects.filter(author=request.user).annotate(
+        days_until_due=ExpressionWrapper(
+            F('due_date') - datetime.now().date(),
+            output_field=IntegerField()  
+        )
+    ).filter(days_until_due__gte=0).order_by('due_date')
+    
+    # count pending, completed and all tasks
+    task_count = tasks.count()
+    completed_task_count = tasks.filter(completed=True).count()
+    pending_task_count = task_count - completed_task_count
     return render(request, 'task/profile.html', {
         'user': user,
-        'notifications': notifications
+        'task_count': task_count,
+        'notifications': notifications,
+        'completed_task_count': completed_task_count,
+        'pending_task_count': pending_task_count
     })
 @csrf_exempt
 @login_required
@@ -322,9 +357,25 @@ def edit_profile(request):
 
 def collaborators_views(request):
     notifications = Notification.objects.filter(user=request.user, is_read=False).all()
-    return render(request, 'collaborators/index.html', {
-        'notifications': notifications
-    })
+    try:
+        user = request.user
+
+        friends_instance = Friends.objects.filter(user=user).first()
+
+        if friends_instance:
+            friends = friends_instance.get_friends()  
+        else:
+            friends = []  
+
+        return render(request, 'collaborators/index.html', {
+            'notifications': notifications,
+            'friends': friends
+        })
+    except Exception as e:
+        print(e)
+        return render(request, 'collaborators/index.html', {
+            'notifications': notifications,
+        })
 
 def search_users(request):
     query = request.GET.get('search', '').strip()
@@ -336,14 +387,39 @@ def search_users(request):
 def invite_user(request, user_id):
     user = get_object_or_404(CustomUser, pk=user_id)
     message = f'{request.user}, invited you to be his friend'
-    Notification.objects.create(user=user, message=message)
+    Notification.objects.create(user=user, sender=request.user, message=message)
     return JsonResponse({'message': 'notification sent successfully!'}, status=200)
     
+def confirm_invitation(request, user_id):
+    friends, created = Friends.objects.get_or_create(user=request.user)
+    friend = get_object_or_404(CustomUser, pk=user_id)
+    u_friends, created = Friends.objects.get_or_create(user=friend)
+    friends.friends.add(friend)
+    u_friends.friends.add(request.user)
+    Notification.objects.create(user=friend, message=f'${request.user} is your friend now')
+    return JsonResponse({'success': True}, status=200)
 
 # Project
 
 def project(request):
     notifications = Notification.objects.filter(user=request.user, is_read=False).all()
+    projects = Project.objects.filter(members=request.user)
     return render(request, 'project/index.html', {
-        'notifications': notifications
+        'notifications': notifications,
+        'projects': projects
     })
+
+
+def create_project(request):
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, initial={'owner': request.user})
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.owner = request.user
+            project.save()
+            form.save_m2m()  # Save the many-to-many relationship
+            print("a")
+            return redirect('project')
+    else:
+        form = ProjectForm(initial={'owner': request.user})
+    return render(request, 'project/create_project.html', {'form': form})
