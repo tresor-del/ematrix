@@ -17,7 +17,6 @@ urlpatterns = [
     path('calendar', views.calendar, name='calendar'),
     path('calendar_tasks/<str:due_date>', views.calendar_tasks, name='calendar_tasks'),
     path('profile/<int:user_id>', views.profile_view, name='profile'),
-
     # API Routes
     path('task_detail/<int:task_id>', views.task_detail, name='task_detail'),
     path('task/<int:task_id>', views.task, name='task'),
@@ -45,7 +44,15 @@ urlpatterns = [
     #Project
 
     path('project', views.project, name='project'),
+    path('project/project_detail/<int:project_id>', views.project_detail, name='project_detail'),
+    path('project/delete_project/<int:project_id>', views.delete_project, name='delete_project'),
+    path('project/edit_project/<int:project_id>', views.edit_project, name='edit_project'),
+    path('project/search_members', views.search_members, name='search_member'),
+    path('project/<int:project_id>/add_member/', views.add_member, name='add_member'),
+    path('project/<int:project_id>/remove_member/', views.remove_member, name='remove_member'),
+    path('project/<int:project_id>/new_task/', views.create_project_task, name='new_project_task'),
+
     #API routes
-    path('create_project', views.create_project, name='create_project')
+    path('project/create_project', views.create_project, name='create_project')
 
 ]

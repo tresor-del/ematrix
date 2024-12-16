@@ -1,20 +1,21 @@
 document.addEventListener('DOMContentLoaded', function(){
 
-    const createNewProjectButton = document.querySelector('#create-project');
-    createNewProjectButton.addEventListener('click', function(){
-        loadNewProject();
+    const EditProjectButton = document.querySelector('#edit-project');
+    EditProjectButton.addEventListener('click', function(){
+
+        loadEditProject(this.dataset.id);
     })
 
 })
 
-function loadNewProject() {
-    console.log('1')
-    fetch('/project/create_project')
+function loadEditProject(projectId) {
+
+    fetch(`/project/edit_project/${projectId}`)
         .then(response => response.text())
         .then(data => {
             displayModal(data);
         })
-        .catch(error => console.error('Error fetching new task:', error));
+        .catch(error => console.error('Error fetching edit project:', error));
 }
 
 /**

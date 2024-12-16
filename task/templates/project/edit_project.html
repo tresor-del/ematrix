@@ -5,14 +5,14 @@
             <!-- Modal Header -->
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="taskModalLabel">
-                    ✏️ New Project
+                    ✏️ Edit Project
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             
             <!-- Modal Body -->
               <div class="modal-body">
-                <form method="post" action="{% url 'task:create_project' %}">
+                <form method="post" action="{% url 'task:edit_project' project.id %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <!-- Project Title -->
@@ -35,7 +35,7 @@
                     <!-- Submit Button -->
                     <div class="d-flex justify-content-center">
                         <button class="btn btn-success m-1" type="submit">
-                            <i class="bi bi-check-circle"></i> Create Project
+                            <i class="bi bi-check-circle"></i> Edit
                         </button>
                     </div>
                 </form>

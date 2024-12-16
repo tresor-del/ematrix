@@ -56,6 +56,23 @@ class Project(models.Model):
     def __str__(self):
         return self.name
     
+class GroupTask(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
+    assigned_to = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('Pending', 'Pending'), ('In Progress', 'In Progress'), ('Completed', 'Completed')],
+        default='Pending'
+    )
+    
+    def __str__(self):
+        return self.name
+    
+    
 ## Task models
 
 class Priority(models.TextChoices):
@@ -68,7 +85,6 @@ class Priority(models.TextChoices):
 
 
 class Task(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='user')
     title = models.CharField(max_length=100)
     description = models.TextField(max_length=300, null=True, blank=True)
@@ -126,6 +142,7 @@ class Notification(models.Model):
         return f" Notification for {self.user.username} at {self.created_at}"
 
 ## Collaborations models
+
 class Friends(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
     friends = models.ManyToManyField('CustomUser', related_name='collaborators')

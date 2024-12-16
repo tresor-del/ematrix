@@ -1,0 +1,149 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary mb-0" id="project" data-id="{{ project.id }}">{{ project.name }}</h1>
+        <div>
+            {% if request.user == project.owner %}
+                <button class="btn btn-warning me-2" id="edit-project" data-id="{{ project.id }}">Edit</button>
+                <form action="{% url 'task:delete_project' project.id %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this project?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-4" id="projectTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">Details</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="tasks-tab" data-bs-toggle="tab" data-bs-target="#tasks" type="button" role="tab">Tasks</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab">Comments</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab">Manage Members</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <!-- Project Details -->
+        <div class="tab-pane fade show active" id="details" role="tabpanel">
+                    <h3 class="card-title">Description</h3>
+                    <p class="text">{{ project.description }}</p>
+
+                    <h3>Owner</h3>
+                    <p><a href="{% url 'task:profile' project.owner.id %}" class="text-decoration-none">{{ project.owner.username }}</a></p>
+
+                    <h3>Created At</h3>
+                    <p>{{ project.created_at|date:"F j, Y" }}</p>
+
+                    <h3>Members</h3>
+                    <ul class="list-group">
+                        {% for member in project.members.all %}
+                            <li class="list-group-item d-flex align-items-center">
+                                <img src="{{ member.profile_image.url }}" alt="{{ member.username }}'s profile picture" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                <a href="{% url 'task:profile' member.id %}" class="text-decoration-none">{{ member.username }}</a>
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No members added yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="tab-pane fade" id="tasks" role="tabpanel">
+                        {% for task in project.tasks.all %}
+                        <ul class="list-group m-2">
+                            <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="background-color: yellowgreen;">
+                                {{ task.name }}  
+                                <span> Assigned to {{ task.assigned_to.username }} </span> 
+                            </li>
+
+                        </ul>
+                        {% empty %}
+                            <li>No tasks created yet.</li>
+                        {% endfor %}
+                    {% if request.user == project.owner %}
+                        <button class="btn btn-success mt-3" id="create-task" data-id="{{ project.id }}">Add Task</button>
+                    {% endif %}
+        </div>
+
+        <!-- Comments Section -->
+        <div class="tab-pane fade" id="comments" role="tabpanel">
+                    <h3 class="card-title">Comments</h3>
+                    <div id="comments-list">
+                        {% for comment in project.comments.all %}
+                            <div class="border-bottom py-2">
+                                <strong>{{ comment.user.username }}</strong>:
+                                <p>{{ comment.text }}</p>
+                                <small class="text-muted">{{ comment.created_at|date:"F j, Y, g:i a" }}</small>
+                            </div>
+                        {% empty %}
+                            <p class="text-muted">No comments yet. Be the first to comment!</p>
+                        {% endfor %}
+                    </div>
+
+                    <form method="post" action="#">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <textarea name="comment" class="form-control" rows="3" placeholder="Add a comment..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                    </form>
+        </div>
+
+        {% if request.user == project.owner %}
+            <div class="tab-pane fade" id="members" role="tabpanel">
+                <div class="justify-content-center">
+                    <h4 class="mt-5">Add members</h4>
+                    <div class="d-flex " role="search" style="width: 50%; ">
+                        <input type="text" id="usernameInput" class="form-control me-2"  aria-label="Search" placeholder="Enter friends to add" />
+                        <button id="addMemberBtn" class="btn btn-outline-success ">Search</button>
+                    </div>  
+                    
+                    <div id="loading" class="text-center mt-3" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <div id="presults" class="mt-4">
+                        <p class="text-center d-none" id="pno-results">No user found. Try searching with a different username.</p>
+                    </div>
+
+                    <h5 class="mt-4">Current Members</h5>
+                    <ul id="memberList" class="list-group">
+                        {% for member in project.members.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center w-50">
+                                {{ member.username }}
+                                {% if request.user == project.owner %}
+                                    <button class="btn btn-sm btn-danger removeMemberBtn" data-id="{{ member.id }}">Remove</button>
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No members added yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                
+            </div>
+        {% endif %}
+            <!-- Back to Projects Button -->
+        <div class="text-center mt-5">
+            <a href="{% url 'task:project' %}" class="btn btn-outline-secondary">Back to Projects</a>
+        </div>
+    </div>
+
+    
+</div>
+
+{% endblock %}

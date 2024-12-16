@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', function(){
 
-    const createNewProjectButton = document.querySelector('#create-project');
+    const createNewProjectButton = document.querySelector('#create-task');
     createNewProjectButton.addEventListener('click', function(){
-        loadNewProject();
+        loadNewProjectTask(this.dataset.id);
     })
 
 })
 
-function loadNewProject() {
+function loadNewProjectTask(projectId) {
     console.log('1')
-    fetch('/project/create_project')
+    fetch(`/project/${projectId}/new_task`)
         .then(response => response.text())
         .then(data => {
             displayModal(data);

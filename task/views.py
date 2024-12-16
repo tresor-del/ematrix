@@ -14,7 +14,7 @@ from django.db.models import ExpressionWrapper, F,  IntegerField
 from django.contrib import messages
 from django.db.models import Q
 
-from .forms import TaskForm, ProjectForm
+from .forms import TaskForm, ProjectForm, GroupTaskForm
 from .models import CustomUser, Task, Notification, Friends, Project
 
 
@@ -403,7 +403,9 @@ def confirm_invitation(request, user_id):
 
 def project(request):
     notifications = Notification.objects.filter(user=request.user, is_read=False).all()
-    projects = Project.objects.filter(members=request.user)
+    projects = Project.objects.filter(
+        Q(members=request.user) | Q(owner=request.user)
+    )    
     return render(request, 'project/index.html', {
         'notifications': notifications,
         'projects': projects
@@ -412,14 +414,117 @@ def project(request):
 
 def create_project(request):
     if request.method == 'POST':
-        form = ProjectForm(request.POST, initial={'owner': request.user})
+        form = ProjectForm(request.POST, owner=request.user )
         if form.is_valid():
             project = form.save(commit=False)
             project.owner = request.user
             project.save()
-            form.save_m2m()  # Save the many-to-many relationship
+            project.members.add(request.user)
+            form.save_m2m()  
             print("a")
-            return redirect('project')
+            return redirect('task:project')
+        else:
+            return redirect('task:project')
     else:
-        form = ProjectForm(initial={'owner': request.user})
-    return render(request, 'project/create_project.html', {'form': form})
+        form = ProjectForm(owner=request.user)
+        return render(request, 'project/create_project.html', {'form': form})
+    
+def project_detail(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    notifications = Notification.objects.filter(user=request.user, is_read=False)
+    return render(request, 'project/project_detail.html', {
+        'project':project,
+        'notifications': notifications
+    })
+
+def delete_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    project.delete()
+    return redirect('task:project')
+
+def edit_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    if request.method == 'POST':
+        form = ProjectForm(request.POST, instance=project)
+        if form.is_valid():
+            project = form.save(commit=False)
+            project.owner = request.user  
+            project.save() 
+            messages.success(request, f'Pask "{project.name}" updated successfully!')
+            return redirect('task:project')
+        else:
+            form = ProjectForm(instance=project)
+            return render(request,'project/edit_project.html', {
+            'form': form,
+            'project': project 
+        })
+    else:
+        form = ProjectForm(instance=project) 
+        return render(request, 'project/edit_project.html', {
+            'form': form,
+            'project': project 
+        })
+    
+def search_members(request):
+    query = request.GET.get('search', '').strip()
+    if query:
+        users = Friends.objects.filter(user=request.user, friends__username__icontains=query).values('friends__id', 'friends__username')
+        print(users)
+        return JsonResponse({'users': list(users)}, status=200)
+    return JsonResponse({'users': []}, status=200)
+    
+@csrf_exempt
+def add_member(request, project_id):
+    if request.method == "POST" :
+        project = get_object_or_404(Project, id=project_id, owner=request.user)
+        data = json.loads(request.body)
+        if data:
+            user_id = data['userId']
+        try:
+            user = CustomUser.objects.get(pk= int(user_id) )
+            if user not in project.members.all():
+                project.members.add(user)
+                return JsonResponse({"message": f" has been added to the project."}, status=200)
+            else:
+                return JsonResponse({"error": f"is already a member of the project."}, status=400)
+        except CustomUser.DoesNotExist:
+            return JsonResponse({"error": f"User  does not exist."}, status=404)
+
+    return JsonResponse({"error": "Invalid request."}, status=400)
+
+@csrf_exempt
+def remove_member(request, project_id):
+    if request.method == "POST":
+        project = get_object_or_404(Project, id=project_id, owner=request.user)
+        data = json.loads(request.body)
+        if data:
+            user_id = data['userId']
+        try:
+            user = CustomUser.objects.get(pk=int(user_id))
+            if user in project.members.all():
+                project.members.remove(user)
+                return JsonResponse({"message": f" has been removed from the project."}, status=200)
+            else:
+                return JsonResponse({"error": f"is not a member of the project."}, status=400)
+        except CustomUser.DoesNotExist:
+            return JsonResponse({"error": f"User  does not exist."}, status=404)
+
+    return JsonResponse({"error": "Invalid request."}, status=400)
+
+
+def create_project_task(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    if request.method == 'POST':
+        form = GroupTaskForm(request.POST, owner=request.user)
+        if form.is_valid():
+            task = form.save(commit=False)
+            task.project = project
+            task.save()
+            return redirect ('task:project_detail', project_id=project_id)
+        print(form.errors)
+        return redirect('task:project_detail', project_id=project_id)
+    form = GroupTaskForm(owner=request.user)
+    return render(request, 'project/new_task.html', {
+        'form': form,
+        'project': project
+    })
