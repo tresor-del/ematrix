@@ -15,7 +15,7 @@ from django.contrib import messages
 from django.db.models import Q
 
 from .forms import TaskForm, ProjectForm, GroupTaskForm
-from .models import CustomUser, Task, Notification, Friends, Project
+from .models import CustomUser, Task, Notification, Friends, Project, Comment, GroupTask
 
 
 
@@ -128,21 +128,16 @@ def tasks_view(request):
 
 @csrf_exempt
 def delete_task(request, task_id):
-    # Fetch the task object using the task_id or return 404 if not found
     task = get_object_or_404(Task, id=task_id)
     
-    # Ensure that the request method is POST (delete operation)
     if request.method == 'POST':
-        task.delete()  # Delete the task from the database
+        task.delete() 
         
-        # Return a JSON response to indicate success
         return JsonResponse({'success': True}, status=200)
     
-    # Optionally show a message if it’s not a POST request (e.g., via GET or other methods)
     task.delete()
     messages.warning(request, f'Task "{task.title}" deleted!')
     
-    # Redirect to the task list page (you may adjust the reverse route as needed)
     return HttpResponseRedirect(reverse('task:tasks'))
 
 
@@ -237,10 +232,18 @@ def dashboard(request):
     task_count = tasks.count()
     completed_task_count = tasks.filter(completed=True).count()
     pending_task_count = task_count - completed_task_count
-    
+    projects = Project.objects.filter( Q(owner=request.user)|Q(members=request.user))
+
+    user_tasks = GroupTask.objects.filter(project__in=projects, assigned_to=request.user)
+    projects_tasks_completed = user_tasks.filter(status='Completed')
+    pending_project_tasks = user_tasks.filter(status='Pending')
+
     notifications = Notification.objects.filter(user=request.user, is_read=False).all()
     context = {
         'tasks': tasks,
+        'projects': len(projects),
+        'projects_tasks_completed': len(projects_tasks_completed),
+        'pending_project_tasks': len(pending_project_tasks),
         'task_count': task_count,
         'completed_task_count': completed_task_count,
         'pending_task_count': pending_task_count,
@@ -263,7 +266,6 @@ def notifications(request):
         })
 
     else:
-    # Gérer le cas où l'utilisateur n'a pas de notifications à marquer
         print("Aucune notification à mettre à jour.")
         return render(request, 'task/notifications.html',{
             'notifications': notifications,
@@ -305,6 +307,7 @@ def calendar_tasks(request, due_date):
 
 def profile_view(request, user_id):
     user = get_object_or_404(CustomUser, pk=user_id)
+    visitor = request.user
     notifications = Notification.objects.filter(user=request.user, is_read=False).all()
     tasks = Task.objects.filter(author=request.user).annotate(
         days_until_due=ExpressionWrapper(
@@ -319,6 +322,7 @@ def profile_view(request, user_id):
     pending_task_count = task_count - completed_task_count
     return render(request, 'task/profile.html', {
         'user': user,
+        'visitor': visitor,
         'task_count': task_count,
         'notifications': notifications,
         'completed_task_count': completed_task_count,
@@ -402,9 +406,11 @@ def confirm_invitation(request, user_id):
 # Project
 
 def project(request):
-    notifications = Notification.objects.filter(user=request.user, is_read=False).all()
+    user = request.user
+    user_id = user.id
+    notifications = Notification.objects.filter(user=user_id, is_read=False).all()
     projects = Project.objects.filter(
-        Q(members=request.user) | Q(owner=request.user)
+        Q(members=user_id) | Q(owner=user_id)
     )    
     return render(request, 'project/index.html', {
         'notifications': notifications,
@@ -422,24 +428,37 @@ def create_project(request):
             project.members.add(request.user)
             form.save_m2m()  
             print("a")
+            for member in request.POST['members']:
+                user = get_object_or_404(CustomUser, pk=member)
+                Notification.objects.create(user=user, message=f'{request.user} created {request.POST['name']} and added you')
             return redirect('task:project')
         else:
             return redirect('task:project')
     else:
-        form = ProjectForm(owner=request.user)
+        user = request.user
+        user_id = user.id
+        form = ProjectForm(owner=user_id)
         return render(request, 'project/create_project.html', {'form': form})
     
 def project_detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     notifications = Notification.objects.filter(user=request.user, is_read=False)
+    try:
+        comments = get_list_or_404(Comment, project=project)
+    except:
+        comments = None
     return render(request, 'project/project_detail.html', {
         'project':project,
-        'notifications': notifications
+        'notifications': notifications,
+        'comments': comments
     })
 
 def delete_project(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
+    for member in project.members.all():
+        Notification.objects.create(user=member, message=f'{request.user} deleted the {project.name} project')
     project.delete()
+    messages.warning(request, f'Project  deleted !')
     return redirect('task:project')
 
 def edit_project(request, project_id):
@@ -449,8 +468,8 @@ def edit_project(request, project_id):
         if form.is_valid():
             project = form.save(commit=False)
             project.owner = request.user  
-            project.save() 
-            messages.success(request, f'Pask "{project.name}" updated successfully!')
+            project.save()
+            messages.success(request, f'Project {project.name} updated successfully!')
             return redirect('task:project')
         else:
             form = ProjectForm(instance=project)
@@ -484,6 +503,7 @@ def add_member(request, project_id):
             user = CustomUser.objects.get(pk= int(user_id) )
             if user not in project.members.all():
                 project.members.add(user)
+                Notification.objects.create(user=user, sender=request.user, message=f"{request.user}, added you to '{project.name}' project")
                 return JsonResponse({"message": f" has been added to the project."}, status=200)
             else:
                 return JsonResponse({"error": f"is already a member of the project."}, status=400)
@@ -503,6 +523,7 @@ def remove_member(request, project_id):
             user = CustomUser.objects.get(pk=int(user_id))
             if user in project.members.all():
                 project.members.remove(user)
+                Notification.objects.create(user=user, sender=request.user, message=f"{request.user}, deleted you from '{project.name}' project")
                 return JsonResponse({"message": f" has been removed from the project."}, status=200)
             else:
                 return JsonResponse({"error": f"is not a member of the project."}, status=400)
@@ -527,4 +548,43 @@ def create_project_task(request, project_id):
     return render(request, 'project/new_task.html', {
         'form': form,
         'project': project
+    })
+
+def comment(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    if request.method == 'POST':
+        comment = request.POST.get('comment')
+        if comment:
+            Comment.objects.create(author=request.user, project=project, comment=comment)
+            return redirect ('task:project_detail', project_id=project_id)
+        print(comment.errors)
+        return redirect('task:project_detail', project_id=project_id)
+    
+def get_out_project(request, project_id):
+    project = get_object_or_404(Project, pk=project_id)
+    project.members.remove(request.user)
+    return redirect('task:project')
+
+@csrf_exempt
+def change_status(request,project_id, task_id):
+    project = get_object_or_404(Project, pk=project_id)
+    task = get_object_or_404(GroupTask, pk=task_id)
+    if request.method in ['PUT', 'POST']:
+        try:
+            data = json.loads(request.body)
+            if 'status' in data:
+                task.status = data['status']
+                task.save()  # Persist the change to the database
+                return JsonResponse({'message': 'Status changed successfully'}, status=200)
+            else:
+                return JsonResponse({'error': 'Missing "status" field in request data'}, status=400)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON data'}, status=400)
+    else:
+        return JsonResponse({'error': 'Method not allowed. Use PUT or POST.'}, status=405)
+
+def project_task_detail(request, task_id):
+    task = get_object_or_404(GroupTask, pk=task_id)
+    return render(request, 'project/task_detail.html',{
+        'task': task
     })

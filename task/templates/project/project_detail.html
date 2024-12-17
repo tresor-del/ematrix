@@ -12,6 +12,11 @@
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
+            {% else %}
+            <form action="{% url 'task:get_out_project' project.id %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to get out to this project?');">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Get out the project</button>
+            </form>
             {% endif %}
         </div>
     </div>
@@ -27,123 +32,198 @@
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab">Comments</button>
         </li>
+        {% if request.user == project.owner %}
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab">Manage Members</button>
         </li>
+        {% endif %}
     </ul>
 
     <!-- Tab Content -->
     <div class="tab-content">
         <!-- Project Details -->
         <div class="tab-pane fade show active" id="details" role="tabpanel">
-                    <h3 class="card-title">Description</h3>
-                    <p class="text">{{ project.description }}</p>
+            <h3 class="card-title">Description</h3>
+            <p class="text">{{ project.description }}</p>
 
-                    <h3>Owner</h3>
-                    <p><a href="{% url 'task:profile' project.owner.id %}" class="text-decoration-none">{{ project.owner.username }}</a></p>
+            <h3>Owner</h3>
+            <p>
+                <img src="{{ project.owner.profile_image.url }}" alt="{{ project.owner.username }}'s profile picture" class="rounded-circle border me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                <a href="{% url 'task:profile' project.owner.id %}" class="text-decoration-none">{{ project.owner.username }}</a>
+            </p>
 
-                    <h3>Created At</h3>
-                    <p>{{ project.created_at|date:"F j, Y" }}</p>
+            <h3>Created At</h3>
+            <p>{{ project.created_at|date:"F j, Y" }}</p>
 
-                    <h3>Members</h3>
-                    <ul class="list-group">
-                        {% for member in project.members.all %}
-                            <li class="list-group-item d-flex align-items-center">
-                                <img src="{{ member.profile_image.url }}" alt="{{ member.username }}'s profile picture" class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
-                                <a href="{% url 'task:profile' member.id %}" class="text-decoration-none">{{ member.username }}</a>
-                            </li>
-                        {% empty %}
-                            <li class="list-group-item">No members added yet.</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
+            <h3>Members</h3>
+            <ul class="list-group">
+                {% for member in project.members.all %}
+                    <li class="list-group-item d-flex align-items-center">
+                        <img src="{{ member.profile_image.url }}" alt="{{ member.username }}'s profile picture" class="rounded-circle border me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                        {% if request.user == member %}
+                        <a href="{% url 'task:profile' member.id %}" class="text-decoration-none">{{ member.username }}(you)</a>
+                        {% else %}
+                        <a href="{% url 'task:profile' member.id %}" class="text-decoration-none">{{ member.username }}</a>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No members added yet.</li>
+                {% endfor %}
+            </ul>
         </div>
 
         <!-- Tasks Section -->
         <div class="tab-pane fade" id="tasks" role="tabpanel">
-                        {% for task in project.tasks.all %}
-                        <ul class="list-group m-2">
-                            <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="background-color: yellowgreen;">
-                                {{ task.name }}  
-                                <span> Assigned to {{ task.assigned_to.username }} </span> 
-                            </li>
+            <ul class="list-group m-2">
+                {% for task in project.tasks.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2" style="background-color: yellowgreen;">
+                        <strong><a href="#" class="btn btn-outline-success detail" data-id="{{ task.id }}">{{ task.name }}</a> | <small id="status">{{ task.status }}</small></strong>
+                        
+                        {% if task.assigned_to == request.user %}
+                        <span>Assigned to you</span>  
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle mr-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                 change Status:
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#" class="dropdown-item status" data-id="{{ task.id }}" data-status="In Progress">
+                                        In Progress
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="dropdown-item status" data-id="{{ task.id }}" data-status="Completed">
+                                        Completed
+                                    </a>
+                                </li>
+                            </ul>
+                        {% else %}
+                        <span>Assigned to {{ task.assigned_to.username }}</span>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No tasks created yet.</li>
+                {% endfor %}
+                <script>
+                    document.querySelectorAll(".detail").forEach( btn => {
+                        btn.addEventListener('click', function(){
+                            console.log('1')
+                            loadTaskDetails(this.dataset.id)
+                        })
+                    })
 
-                        </ul>
-                        {% empty %}
-                            <li>No tasks created yet.</li>
-                        {% endfor %}
-                    {% if request.user == project.owner %}
-                        <button class="btn btn-success mt-3" id="create-task" data-id="{{ project.id }}">Add Task</button>
-                    {% endif %}
+                    function loadTaskDetails(taskId) {
+                        fetch(`/project/task_detail/${taskId}`)
+                            .then(response => response.text())
+                            .then(data => {
+                                displayModal(data);
+                                    })
+                    }
+
+                    function displayModal(content, onCloseCallback) {
+                        document.getElementById('modal-body-content').innerHTML = content;
+                        const taskModal = new bootstrap.Modal(document.getElementById('taskModal'), { keyboard: false });
+                        taskModal.show();
+
+                        if (onCloseCallback) {
+                            document.querySelector('#form').addEventListener('submit', event => {
+                                event.preventDefault();
+                                onCloseCallback();
+                            });
+                        }
+                    }
+                </script>
+            </ul>
+            {% if request.user == project.owner %}
+            <div class="text-center">
+                <button class="btn btn-success mt-3" id="create-task" data-id="{{ project.id }}">Add Task</button>
+            </div>
+            {% endif %}
         </div>
 
         <!-- Comments Section -->
         <div class="tab-pane fade" id="comments" role="tabpanel">
-                    <h3 class="card-title">Comments</h3>
-                    <div id="comments-list">
-                        {% for comment in project.comments.all %}
-                            <div class="border-bottom py-2">
-                                <strong>{{ comment.user.username }}</strong>:
-                                <p>{{ comment.text }}</p>
-                                <small class="text-muted">{{ comment.created_at|date:"F j, Y, g:i a" }}</small>
-                            </div>
-                        {% empty %}
-                            <p class="text-muted">No comments yet. Be the first to comment!</p>
-                        {% endfor %}
+            <h3 class="card-title">Comments</h3>
+            <div id="comments-list" class="border p-3" style="max-height:1000px; overflow-y: scroll;">
+                {% for comment in comments %}
+                    <div class="border p-2 m-2 rounded bg-light">
+                        <li class="list-group-item d-flex align-items-center">
+                            <img src="{{ comment.author.profile_image.url }}" alt="{{ member.username }}'s profile picture" class="rounded-circle border me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                            <a href="{% url 'task:profile' comment.author.id %}" class="text-decoration-none"><strong>{{ comment.author.username }}</strong>:</a>
+                        </li>
+                        
+                        <p class="text-muted">{{ comment.comment }}</p>
+                        <small class="text-muted">{{ comment.created_at|date:"F j, Y, g:i a" }}</small>
                     </div>
+                {% empty %}
+                    <p class="text-muted">No comments yet. Be the first to comment!</p>
+                {% endfor %}
+            </div>
 
-                    <form method="post" action="#">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <textarea name="comment" class="form-control" rows="3" placeholder="Add a comment..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Post Comment</button>
-                    </form>
+            <form class=" m-2 justify-content-center" method="post" action="{% url 'task:comment' project.id %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea name="comment" class="form-control "  placeholder="Add a comment..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-secondary "> <i class="bi bi-send"></i> Comment</button>
+            </form>
         </div>
 
         {% if request.user == project.owner %}
+            <!-- Manage Members Section -->
             <div class="tab-pane fade" id="members" role="tabpanel">
-                <div class="justify-content-center">
-                    <h4 class="mt-5">Add members</h4>
-                    <div class="d-flex " role="search" style="width: 50%; ">
-                        <input type="text" id="usernameInput" class="form-control me-2"  aria-label="Search" placeholder="Enter friends to add" />
-                        <button id="addMemberBtn" class="btn btn-outline-success ">Search</button>
-                    </div>  
-                    
-                    <div id="loading" class="text-center mt-3" style="display: none;">
-                        <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
+                <div class="row">
+                    <div class="col-md-6" >
+                        <h5 >Add Members</h5><hr>
+                        <div class="d-flex" role="search" >
+                            <input type="text" id="usernameInput" class="form-control me-2" aria-label="Search" placeholder="Enter friends to add">
+                            <button id="addMemberBtn" id="search-btn" class="btn btn-outline-success">Search</button>
+                        </div>
+
+                        <div id="loading" class="text-center mt-3" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+
+                        <div id="presults" class="mt-4  ">
+                            <div class="presults-container">
+
+                            </div>
+                            <p class="text-center d-none" id="pno-results">No user found. Try searching with a different username.</p>
                         </div>
                     </div>
-                    <div id="presults" class="mt-4">
-                        <p class="text-center d-none" id="pno-results">No user found. Try searching with a different username.</p>
-                    </div>
 
-                    <h5 class="mt-4">Current Members</h5>
-                    <ul id="memberList" class="list-group">
-                        {% for member in project.members.all %}
-                            <li class="list-group-item d-flex justify-content-between align-items-center w-50">
-                                {{ member.username }}
-                                {% if request.user == project.owner %}
-                                    <button class="btn btn-sm btn-danger removeMemberBtn" data-id="{{ member.id }}">Remove</button>
-                                {% endif %}
-                            </li>
-                        {% empty %}
-                            <li class="list-group-item">No members added yet.</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="col-md-6">
+                         <h5 >Current Members</h5><hr>
+                        <ul id="memberList" class="list-group">
+                            {% for member in project.members.all %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <img src="{{ member.profile_image.url }}" alt="{{ member.username }}'s profile picture" class="rounded-circle border me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {{ member.username }}
+                                    </div>
+                                    
+                                    {% if request.user == project.owner %}
+                                        <button class="btn btn-sm btn-danger removeMemberBtn" data-id="{{ member.id }}">Remove</button>
+                                    {% endif %}
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">No members added yet.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                   
                 </div>
-                
             </div>
         {% endif %}
-            <!-- Back to Projects Button -->
+
+        <!-- Back to Projects Button -->
         <div class="text-center mt-5">
             <a href="{% url 'task:project' %}" class="btn btn-outline-secondary">Back to Projects</a>
         </div>
+
+        <div class="modal-body" id="modal-body-content"></div>
     </div>
-
-    
 </div>
-
 {% endblock %}

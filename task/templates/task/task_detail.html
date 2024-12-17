@@ -69,12 +69,6 @@
           <a class="btn btn-sm btn-outline-primary m2" data-id="{{ task.id }}">
             ✏️ Update
           </a>
-          <a href="#" class="btn btn-sm btn-outline-info">
-            📁 Add to Project
-          </a>
-          <a href="#" class="btn btn-sm btn-outline-info">
-            <i class="bi bi-people me"></i> Add to Colaborators
-          </a>
         {% endif %}
         <a href="{% url 'task:delete_task' task.id %}" class="btn btn-sm btn-outline-danger" id="showToastBtn">
           🗑️ Delete

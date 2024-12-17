@@ -31,7 +31,6 @@
     --urgent-not-important: #4c768a;
     --not-urgent-not-important: #969c70;
     --border-color: grey;
-    --modal-header-color: #202123;
 }
 
 /* ----------- Body & Typography ----------- */
@@ -100,28 +99,25 @@ body {
 }
 
 
-/* ----------- Pagination ----------- */
-.pagination{
-    display: flex;
-    justify-content: space-between; /* Align elements at both ends */
-    align-items: center; /* Center elements vertically */
-    margin-bottom: 20px;
-    padding: 0 10px; /* Add some padding to the sides */
+.pagination {
+    flex-wrap: wrap; /* Permet de passer à plusieurs lignes si nécessaire */
 }
 
-.pagination a {
-    color: var(--text-color);
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: transform 0.3s ease, color 0.3s ease;
+.pagination h4 {
+    margin: 0;
 }
 
-.pagination  a:hover {
-    transform: scale(1.2); /* Slightly enlarge the buttons on hover */
-    color: #ffcc00; /* Add a hover color */
+@media (max-width: 768px) {
+    .pagination .btn {
+        padding: 0.5rem 0.75rem; /* Réduction de la taille des boutons */
+    }
+
+    .pagination h4 span {
+        font-size: 0.9rem; /* Réduction de la taille du texte pour les dates */
+        padding: 0.5rem 1rem;
+    }
 }
+
 
 
 

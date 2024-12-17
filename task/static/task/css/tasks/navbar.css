@@ -39,6 +39,7 @@
     nav.navbar2{
         background-color: var(--background-color) !important; 
         box-shadow: 0 1px 1px var(--text-color);
+        transition: all 1s ease-in-out;
     }
 
     nav.navbar2 .nav-link{
@@ -49,6 +50,11 @@
         margin-top: 100px !important;
         margin-left: 0 !important; 
         width: 100% !important; 
+    }
+
+    .ac{
+        border-bottom: 2px solid var(--primary-color) ; 
+        border-left: none;
     }
    
 }

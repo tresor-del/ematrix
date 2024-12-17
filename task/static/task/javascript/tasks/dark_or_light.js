@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // variables
     const body = document.documentElement;
     const modeElements = document.querySelectorAll('.mode');
-    const modeToggle = document.querySelector('#mode-toggle');
+    const modeToggle = document.querySelectorAll('.mode-toggle');
     const dropdowns = document.querySelectorAll('.dropdown');
 
     if (isDarkMode) {
@@ -17,7 +17,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Ajouter l'événement de basculement du mode
-    modeToggle.addEventListener('click', toggleDarkMode);
+    modeToggle.forEach( btn => {
+        btn.addEventListener('click', toggleDarkMode);
+    });
 
     // Fonction pour activer le mode sombre
     function enableDarkMode() {

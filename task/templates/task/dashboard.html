@@ -3,9 +3,10 @@
 {% block body %}
 
     <div class="container my-4 w-75">
-        <h1 class="text-center" style="margin: 20px;">Your Tasks and Projects</h1>
+        <h1 class="text-center" style="margin: 20px;">Your Personal Tasks and Projects</h1>
 
         <!-- Summary Section-->
+         <h4>Personal Tasks </h4> <hr>   
         <div class="row g-3 m-3">
             <!-- All Tasks -->
             <div class="col-lg-4 col-sm-12">
@@ -60,6 +61,46 @@
             <strong>Hey {{ request.user }}!</strong> It looks like you haven't added any tasks or projects yet !
         </div>
         {% endif %}
+
+        <h4 class="mt-5">Projects </h4> <hr>
+        <div class="row g-3 m-3">
+            <!-- All Projects-->
+            <div class="col-lg-4 col-sm-12">
+                <div class="card text-white bg-primary shadow-lg">
+                    <div class="card-header text-center">
+                        <i class="fas fa-tasks"></i> Projects in which you are include
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-center">{{ projects }} &#128189;</p>
+                    </div>
+                </div>
+            </div>
+        
+            <!--  Tasks Assigned to the current user -->
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-white bg-success shadow-lg">
+                    <div class="card-header text-center">
+                        <i class="fas fa-check-circle"></i> Tasks you have completed
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-center" id="ct">{{ projects_tasks_completed }} &#x2705;</p>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Pending Tasks -->
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <div class="card text-white bg-warning shadow-lg">
+                    <div class="card-header text-center">
+                        <i class="fas fa-hourglass-half"></i>  Pending Tasks
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-center" id="tc">{{ pending_project_tasks }} &#x23F3;</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </div>
 

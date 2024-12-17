@@ -49,6 +49,8 @@
         <script src="{% static 'task/javascript/projects/edit_project.js' %}"></script>
         <script src="{% static 'task/javascript/projects/searchUser.js' %}"></script>
         <script src="{% static 'task/javascript/projects/create_task.js' %}"></script>
+        <script src="{% static 'task/javascript/projects/tasks_status.js' %}"></script>
+        <script src="{% static 'task/javascript/projects/load_task_details.js' %}"></script>
 
 </head>
 <body class="d-flex flex-column min-vh-100 " id="body">
@@ -100,7 +102,7 @@
                     <!-- Collaboration Link -->
                     <li class="nav-item">
                         <a class="nav-link n"  href="{% url 'task:collaboration' %}">
-                            <i class="bi bi-people me-2"></i>Collaboration
+                            <i class="bi bi-people me-2"></i>Friends
                         </a>
                     </li>
                     
@@ -135,7 +137,7 @@
                 
                     <!-- Dark/Light Mode Toggle -->
                     <li class="nav-item">
-                        <a class="nav-link " id="mode-toggle" style="cursor: pointer;">
+                        <a class="nav-link mode-toggle" style="cursor: pointer;">
                             <i class="bi bi-moon me-2" id="themeIcon"></i>Dark Mode
                         </a>
                     </li>
@@ -230,18 +232,15 @@
                     </li>
 
                     <!-- Notifications -->
-                    <li class="nav-item" >
-                        <a class="nav-link m4" id="notificationsButton" style="cursor: pointer;">
-                            <i class="bi bi-bell me-2"></i>Notifications
-                            {% if notifications|length %}
-                            <span class="badge text-bg-danger m-1">{{ notifications|length }}</span>
-                            {% endif %}
+                    <li class="nav-item">
+                        <a href="{% url 'task:notifications' %}" class="nav-link m4 n" >
+                            <i class="bi bi-bell me-2"></i>Notifications {% if notifications %}<span class="badge text-bg-secondary">{{ notifications|length }}</span>{% endif %}
                         </a>
                     </li>
 
-                     <!-- Dark/Light Mode -->
-                     <li class="nav-item">
-                        <a class="nav-link" id="mode-toggle">
+                     <!-- Dark/Light Mode Toggle -->
+                    <li class="nav-item">
+                        <a class="nav-link mode-toggle" style="cursor: pointer;">
                             <i class="bi bi-moon me-2" id="themeIcon"></i>Dark Mode
                         </a>
                     </li>

@@ -5,18 +5,17 @@ from django.utils.translation import gettext_lazy as _
 
 class CustomUser(AbstractUser):
     profile_image = models.ImageField(upload_to='images/', null=True, blank=True)
-    #bio = models.TextField(max_length=150, null=True, blank=True)
 
     groups = models.ManyToManyField(
         'auth.Group',
-        related_name='customuser_set',  # Utiliser un nom unique ici
+        related_name='customuser_set',  
         blank=True,
         help_text='Les groupes auxquels cet utilisateur appartient.',
         verbose_name='groupes'
     )
     user_permissions = models.ManyToManyField(
         'auth.Permission',
-        related_name='customuser_set',  # Utiliser un nom unique ici
+        related_name='customuser_set',  
         blank=True,
         help_text='Les permissions spécifiques à cet utilisateur.',
         verbose_name='permissions utilisateur'
@@ -141,7 +140,6 @@ class Notification(models.Model):
     def __str__(self):
         return f" Notification for {self.user.username} at {self.created_at}"
 
-## Collaborations models
 
 class Friends(models.Model):
     user = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
@@ -154,3 +152,11 @@ class Friends(models.Model):
     def get_friends(self):
         return self.friends.all()
 
+class Comment(models.Model):
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    comment = models.TextField()
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.author} comment {self.comment}'

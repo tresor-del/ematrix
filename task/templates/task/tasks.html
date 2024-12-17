@@ -2,30 +2,7 @@
 
 {% block body %}
 
-<!-- Toast for Notifications -->
-{% if messages %}
-        {% for message in messages %}
-            <div class="toast-container position-fixed top-0 end-0 p-3 mode">
-                <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-header">
-                        <strong class="me-auto">Notification</strong>
-                        <small>Juste maintenant</small>
-                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                    <div class="toast-body">
-                        <p>{{ message }}</p>
-                    </div>
-                </div>
-            </div>
-            <script>
-                const toastLiveExample = document.getElementById('liveToast');
-                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
 
-                toastBootstrap.show();
-
-            </script>
-        {% endfor %}
-    {% endif %}
 
 {% if not page_obj %}
 
@@ -33,118 +10,150 @@
     <div id="app"></div>
 
 {% else %}
-
-            <!-- Button to Add New Task -->
-            <div class=" d-flex justify-content-center mt-4">
+<div class="container">
+    <!-- Button to Add New Task -->
+            <div class=" mt-4">
                 <a href="#" class="btn btn-secondary m-1 m3">
                     <i class="bi bi-plus-circle me-2"></i>Add New Task
-                </a>
-                <a href="#suggestion" class="btn btn-secondary m-1">
-                    ✨ Suggestions
                 </a>
             </div>
             
     {% for due_date, tasks in page_obj %}
     
-            <!-- Pagination Links -->
-            <div class="pagination  m-3">
-                <span >
-                    {% if page_obj.has_previous %}
-                        <a href="?page={{ page_obj.previous_page_number }} " class="btn" id="r"><i class="bi bi-chevron-left "></i></a>
-                    {% endif %}
-                </span>
-                {% if due_date == today.date %}
-                    <hr><h4 id="today" class="center p-1">{{ today }}</h4><hr>
-                {% else %}
-                    <hr><h4 id="{{ due_date }}" class="center p-3">{{ due_date }} </h4><hr>
-                {% endif %}
-                <span>
-                    {% if page_obj.has_next %}
-                        <a href="?page={{ page_obj.next_page_number }}" id="r" class="btn" ><i class="bi bi-chevron-right "></i></a>
-                    {% endif %}
-                </span>
-            </div>
+    <div class="pagination d-flex justify-content-between align-items-center m-3">
+        <!-- Bouton Précédent -->
+        {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-chevron-left"></i> <!-- Icône de Bootstrap -->
+                <span class="d-none d-md-inline">Previous</span> <!-- Texte masqué sur petits écrans -->
+            </a>
+        {% endif %}
+    
+        <!-- Affichage de la Date -->
+        <h4 class="text-center mx-2 my-0">
+            {% if due_date == today.date %}
+                <span id="today" class="badge bg-primary text-white py-2 px-3">{{ today }}</span>
+            {% else %}
+                <span id="{{ due_date }}" class="badge bg-secondary text-white py-2 px-3">{{ due_date }}</span>
+            {% endif %}
+        </h4>
+    
+        <!-- Bouton Suivant -->
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">
+                <span class="d-none d-md-inline">Next</span> <!-- Texte masqué sur petits écrans -->
+                <i class="bi bi-chevron-right"></i> <!-- Icône de Bootstrap -->
+            </a>
+        {% endif %}
+    </div>
+    
         
              <!-- Pages displayed dynamically by React -->
 
             <!-- Eisenhower Matrix displaying all tasks for the current day (is displayed by default)-->
-            <div class="eisenhower-matrix p-0 div" id="ei">
-                <!-- Important and Urgent -->
-                <div class="matrix-cell urgent-important" style="max-height:400px ; overflow-y: scroll;">
-                    <h6>&#x26A0;&#xFE0F; Important and Urgent</h6> <!-- ⚠️ -->
-                    <p>To do</p>
-                    {% for task in tasks %}
-                        {% if task.priority == 'important and urgent' %}
-                            {% if task.completed %}
-                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
-                                    &#x2705; <!-- ✅ --> {{ task.title }}
-                                </a>
-                            {% else %}
-                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
-                                    &#x23F3; <!-- ⏳ --> {{ task.title }}
-                                </a>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                </div>
+            <div class="container-fluid px-2 px-sm-3">
+                <div class="row">
+                    <!-- Eisenhower Matrix -->
+                    <div class="col-12">
+                        <div class="eisenhower-matrix d-grid gap-3">
+                            <!-- Important and Urgent -->
+                            <div class="card urgent-important">
+                                <div class="card-header bg-danger text-white">
+                                    <h6>&#x26A0;&#xFE0F; Important and Urgent</h6> <!-- ⚠️ -->
+                                    <p class="mb-0">To do</p>
+                                </div>
+                                <div class="card-body overflow-auto" style="max-height: 400px;">
+                                    {% for task in tasks %}
+                                        {% if task.priority == 'important and urgent' %}
+                                            {% if task.completed %}
+                                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
+                                                    &#x2705; <!-- ✅ --> {{ task.title }}
+                                                </a>
+                                            {% else %}
+                                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
+                                                    &#x23F3; <!-- ⏳ --> {{ task.title }}
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
             
-                <!-- Important but not Urgent -->
-                <div class="matrix-cell not-urgent-important" style="max-height:400px ; overflow-y: scroll;">
-                    <h6>&#x1F6A8; Important but not Urgent</h6> <!-- 🚨 -->
-                    <p>To planify</p>
-                    {% for task in tasks %}
-                        {% if task.priority == 'important but not urgent' %}
-                            {% if task.completed %}
-                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
-                                    &#x2705; <!-- ✅ --> {{ task.title }}
-                                </a>
-                            {% else %}
-                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
-                                    &#x23F3; <!-- ⏳ --> {{ task.title }}
-                                </a>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                            <!-- Important but not Urgent -->
+                            <div class="card not-urgent-important">
+                                <div class="card-header bg-warning text-dark">
+                                    <h6>&#x1F6A8; Important but not Urgent</h6> <!-- 🚨 -->
+                                    <p class="mb-0">To planify</p>
+                                </div>
+                                <div class="card-body overflow-auto" style="max-height: 400px;">
+                                    {% for task in tasks %}
+                                        {% if task.priority == 'important but not urgent' %}
+                                            {% if task.completed %}
+                                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
+                                                    &#x2705; <!-- ✅ --> {{ task.title }}
+                                                </a>
+                                            {% else %}
+                                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
+                                                    &#x23F3; <!-- ⏳ --> {{ task.title }}
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
             
-                <!-- Not Important but Urgent -->
-                <div class="matrix-cell urgent-not-important" style="max-height:400px ; overflow-y: scroll;">
-                    <h6>&#x23F3; Not Important but Urgent</h6> <!-- ⏳ -->
-                    <p>To delegate</p>
-                    {% for task in tasks %}
-                        {% if task.priority == 'not important but ugent' %}
-                            {% if task.completed %}
-                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
-                                    &#x2705; <!-- ✅ --> {{ task.title }}
-                                </a>
-                            {% else %}
-                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
-                                    &#x1F4E4; <!-- 📤 --> {{ task.title }}
-                                </a>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                </div>
+                            <!-- Not Important but Urgent -->
+                            <div class="card urgent-not-important">
+                                <div class="card-header bg-info text-white">
+                                    <h6>&#x23F3; Not Important but Urgent</h6> <!-- ⏳ -->
+                                    <p class="mb-0">To delegate</p>
+                                </div>
+                                <div class="card-body overflow-auto" style="max-height: 400px;">
+                                    {% for task in tasks %}
+                                        {% if task.priority == 'not important but urgent' %}
+                                            {% if task.completed %}
+                                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
+                                                    &#x2705; <!-- ✅ --> {{ task.title }}
+                                                </a>
+                                            {% else %}
+                                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
+                                                    &#x1F4E4; <!-- 📤 --> {{ task.title }}
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
             
-                <!-- Not Important and not Urgent -->
-                <div class="matrix-cell not-urgent-not-important" style="max-height:400px ; overflow-y: scroll;"    >
-                    <h6>&#x1F5D1;&#xFE0F; Not Important and Not Urgent</h6> <!-- 🗑️ -->
-                    <p>To delete</p>
-                    {% for task in tasks %}
-                        {% if task.priority == 'not important and not urgent' %}
-                            {% if task.completed %}
-                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
-                                    &#x2705; <!-- ✅ --> {{ task.title }}
-                                </a>
-                            {% else %}
-                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
-                                    &#x1F5D1;&#xFE0F; <!-- 🗑️ --> {{ task.title }}
-                                </a>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
+                            <!-- Not Important and Not Urgent -->
+                            <div class="card not-urgent-not-important">
+                                <div class="card-header bg-secondary text-white">
+                                    <h6>&#x1F5D1;&#xFE0F; Not Important and Not Urgent</h6> <!-- 🗑️ -->
+                                    <p class="mb-0">To delete</p>
+                                </div>
+                                <div class="card-body overflow-auto" style="max-height: 400px;">
+                                    {% for task in tasks %}
+                                        {% if task.priority == 'not important and not urgent' %}
+                                            {% if task.completed %}
+                                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
+                                                    &#x2705; <!-- ✅ --> {{ task.title }}
+                                                </a>
+                                            {% else %}
+                                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
+                                                    &#x1F5D1;&#xFE0F; <!-- 🗑️ --> {{ task.title }}
+                                                </a>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+            
+            
+            
    
             <!-- Statistic -->
             {% if due_date == today %}
@@ -199,84 +208,14 @@
                     </script>
                 </div>
             {% endif %}
-
-            <hr class="p-2 m-2">
-
-        <!-- Suggestions for planning -->
-        <h1 class="text-center m-3" id="suggestion">✨ Productivity Suggestions ✨</h1>
-        <div class="container my-4 m-2">
-            <div class="row g-4">
-                <!-- Task to do now -->
-                <div class="col-md-3 p-3 ">
-                    <h4 class="text-danger text-center">🚀 Do it Now:</h4>
-                    <p class="text">These critical tasks demand your immediate attention. Take action now!</p>
-                        {% for due_date, tasks in page_obj %}
-                            {% if  important_urgent_tasks %}
-                                {% for task in  important_urgent_tasks %}
-                                    {% if task.due_date == due_date %}
-                                        - <a  class="text fw-bold" style="text-decoration: none; list-style-type: none;">{{ task.title }}</a>
-                                    {% endif %}
-                                {% endfor %}    
-                            {% endif %}
-                        {% endfor %}
-                </div>
-                
-                <!-- Task to plan -->
-                <div class="col-md-3 p-3 ">
-                    <h4 class="text-primary text-center">📅 Plan It:</h4>
-                    <p class="text">Important but not urgent tasks. Schedule them to stay ahead.</p>
-                        {% for due_date, tasks in page_obj %}
-                            {% if  important_not_urgent_tasks %}
-                                {% for task in  important_not_urgent_tasks %}
-                                    {% if task.due_date == due_date %}
-                                        - <a  class="text fw-bold" style="text-decoration: none; list-style-type: none;">{{ task.title }}</a>
-                                    {% endif %}
-                                {% endfor %}    
-                            {% endif %}
-                        {% endfor %}
-                </div>
-
-                <!-- Task to delegate -->
-                <div class="col-md-3 p-3 ">
-                    <h4 class="text-warning text-center">🤝 Delegate It:</h4>
-                    <p class="text">These urgent tasks can be handled by someone else. Lighten your load!</p>
-                        {% for due_date, tasks in page_obj %}
-                            {% if  not_important_urgent_tasks %}
-                                {% for task in  not_important_urgent_tasks %}
-                                    {% if task.due_date == due_date %}
-                                        - <a  class="text fw-bold" style="text-decoration: none; list-style-type: none;">{{ task.title }}</a>
-                                    {% endif %}
-                                {% endfor %}    
-                            {% endif %}
-                        {% endfor %}
-                </div>
-
-                <!-- Task to delete -->
-                <div class="col-md-3 p-3 ">
-                    <h4 class="text-secondary text-center">🗑️ Eliminate It:</h4>
-                    <p class="text">These tasks add no value. Remove them to focus on what matters.</p>
-                        {% for due_date, tasks in page_obj %}
-                            {% if   not_important_not_urgent_tasks %}
-                                {% for task in   not_important_not_urgent_tasks %}
-                                    {% if task.due_date == due_date %}
-                                        <a  class="text fw-bold" style="text-decoration: none; list-style-type: none;">{{ task.title }}</a>
-                                    {% endif %}
-                                {% endfor %}    
-                            {% endif %}
-                        {% endfor %}
-                </div>
-            </div>
-            <!-- Planning button -->
-            <div class="text-center m-5">
-                <a class="btn btn-outline-primary" href="#"><i class="bi bi-play"></i> Start Planning Today</a>
-            </div>
-        </div>
-                   
+ 
     {% endfor %}
      
 {% endif %}
+</div>
+            
 
-<!-- Modal Template for adding New Task, Updating tasks, task details -->
+<!-- Modal Template -->
 
 <div class="modal-body" id="modal-body-content"></div>
 

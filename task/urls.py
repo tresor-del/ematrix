@@ -51,8 +51,11 @@ urlpatterns = [
     path('project/<int:project_id>/add_member/', views.add_member, name='add_member'),
     path('project/<int:project_id>/remove_member/', views.remove_member, name='remove_member'),
     path('project/<int:project_id>/new_task/', views.create_project_task, name='new_project_task'),
-
+    path('project/<int:project_id>/new_comment', views.comment, name='comment'),
+    path('project/<int:project_id>/get_out', views.get_out_project, name='get_out_project'),
     #API routes
-    path('project/create_project', views.create_project, name='create_project')
+    path('project/create_project', views.create_project, name='create_project'),
+    path('project/<int:project_id>/task/<int:task_id>/status', views.change_status, name='change_status'),
+    path('project/task_detail/<int:task_id>', views.project_task_detail, name='project_task_detail'),
 
 ]

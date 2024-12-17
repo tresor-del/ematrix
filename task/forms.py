@@ -53,6 +53,7 @@ class ProjectForm(forms.ModelForm):
     members = forms.ModelMultipleChoiceField(
         queryset=CustomUser.objects.none(),  
         widget=forms.SelectMultiple(attrs={
+            'name': 'name',
             'class': 'form-select form-select-sm mb-3',
             'id': 'id_members',
         })
@@ -63,6 +64,7 @@ class ProjectForm(forms.ModelForm):
         fields = ['name', 'description', 'category', 'members']
         widgets = {
             'name': forms.TextInput(attrs={
+                'name': 'name',
                 'class': 'form-control mb-3',
                 'placeholder': 'Enter task title',
                 'aria-label': 'New Task',

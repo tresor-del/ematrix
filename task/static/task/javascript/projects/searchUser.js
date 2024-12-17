@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function(){
         
             // Ajout de l'événement au bouton
             const inviteButton = userCard.querySelector('#add-btn');
-            inviteButton.addEventListener('click', () => addMember(user.id));
+            inviteButton.addEventListener('click', () => addMember(user.friends__id));
         
             // Ajout de la carte dans le conteneur des résultats
             resultsDiv.appendChild(userCard);
@@ -61,13 +61,8 @@ document.addEventListener('DOMContentLoaded', function(){
             })
             .then(data => {
                 displayUsers(data.users);
-                document.querySelector('#search-button').addEventListener('click',function(){
-                    document.querySelector('#search').value = '';
-                    
-                })
             })
             .catch(error => {
-                loadingIndicator.style.display = 'none';
                 console.error('Erreur :', error);
                 alert('Une erreur s\'est produite lors de la recherche.');
                 
@@ -89,9 +84,10 @@ document.addEventListener('DOMContentLoaded', function(){
         .then(data => {
             if (data.message) {
                 alert(data.message);
-                location.reload(); // Reload the page to update the member list
+                location.reload(); 
             } else if (data.error) {
                 alert(data.error);
+                location.reload();
             }
         });
     };

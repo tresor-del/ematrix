@@ -1,0 +1,53 @@
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content shadow-lg mode custom-bg">
+        <!-- Modal Header -->
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="taskModalLabel">
+            <i class="bi bi-info-circle-fill"></i> Task Details
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+  
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <!-- Title -->
+          <div class="mb-4">
+            <h6 class="fw-bold">📝 Title</h6>
+            <p>{{ task.name }}</p>
+          </div>
+  
+          <!-- Description -->
+          <div class="mb-4">
+            <h6 class="fw-bold">🖋️ Description</h6>
+            <p>{{ task.description }}</p>
+          </div>
+  
+          <!-- Dates -->
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="fw-bold">📅 Created At</h6>
+              <p>{{ task.created_at }}</p>
+            </div>
+          </div>
+  
+          <!-- Priority and Completion Status -->
+          <div class="row">
+            <div class="col-md-6">
+              <h6 class="fw-bold">✅ Status</h6>
+              <span class="badge bg-primary">
+                {{ task.status }}
+              </span>
+            </div>
+          </div>
+  
+          <!-- Last Update -->
+          <div class="mt-4">
+            <h6 class="fw-bold">Assigned to:</h6>
+            <p>{{ task.assigned_to }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
