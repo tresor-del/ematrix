@@ -1,0 +1,108 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+
+<div class="container-fluid py-5">
+    <div class="row mb-5">
+        <!-- Header Section -->
+        <div class="col-12 text-center">
+            <h1 class="display-4 text-primary">Master Your Projects with Precision</h1>
+            <p class="lead text-secondary">Effortlessly plan, manage, and execute your projects to achieve unparalleled success.</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col text-start">
+            <div class="dropdown">
+                <!-- Main Button -->
+                <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                    <i class="bi bi-folder-plus fs-5"></i> New Project
+                </button>
+        
+                <!-- Form inside the dropdown -->
+                <form class="dropdown-menu p-4 shadow-lg rounded" id="project-form" method="post" action="{% url 'task:create_project' %}" style="min-width: 300px;">
+                    {% csrf_token %}
+                    <h6 class="dropdown-header text-center mb-3">Create New Project</h6>
+                    
+                    <!-- Project Name Field -->
+                    <div class="form-group mb-3">
+                        <label for="id_name" class="form-label">Project Name</label>
+                        {{ form.name }}
+                    </div>
+                
+                    <!-- Members Selection -->
+                    <div class="form-group mb-3">
+                        <label for="id_members" class="form-label">Choose Members</label>
+                        {{ form.members }}
+                    </div>
+                
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-success" id="project-btn">
+                            <i class="bi bi-check-circle"></i> Create
+                        </button>
+                    </div>
+                </form>
+                
+            </div>
+        </div>  
+        <div class="col text-end">
+            <input class=" w-50" id="search-task" type="text" placeholder="Start typing to filter...">
+        </div>
+    </div>
+    
+    <!-- Projects Section -->
+    {% if projects %}
+        <div class="row justify-content-start" id="project-container">
+            {% for project in projects %}
+                <div class="col-12 col-md-6 col-lg-4 mb-4 project-item">
+                    <a href="{% url 'task:project_detail' project.id %}" style="color: black; text-decoration: none;">
+                        <div class="card shadow-lg border-light" style="background-color: {% if project.status == 'Completed' %}#d4edda{% elif project.status == 'In Progress' %}#fff3cd{% else %}#f8d7da{% endif %};">
+                            <div class="card-body">
+                                <h5 class="card-title title" style="color: {% if project.status == 'Completed' %}green{% elif project.status == 'In Progress' %}orange{% else %}red{% endif %};">
+                                    {{ project.name }}
+                                </h5>
+                                <small class="mb-2">{{ project.members.all|length }} members</small>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            {% endfor %}
+            <div id="no-results" class="text-center text-muted mt-3" style="display: none;">
+                No project found
+            </div>
+        </div>
+        <script>
+            // Filter projects based on search input
+            document.getElementById('search-task').addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const tasks = document.querySelectorAll('.project-item');
+                let visibleTasks = 0;
+        
+                tasks.forEach(task => {
+                    const taskText = task.querySelector('.title').textContent.toLowerCase();
+                    if (taskText.includes(query)) {
+                        task.style.display = '';
+                        visibleTasks++;
+                    } else {
+                        task.style.display = 'none';
+                    }
+                });
+        
+                const noResultsMessage = document.getElementById('no-results');
+                if (visibleTasks === 0) {
+                    noResultsMessage.style.display = 'block';
+                } else {
+                    noResultsMessage.style.display = 'none';
+                }
+            });
+        </script>
+    {% else %}
+        <!-- No projects message can be added here if needed -->
+    {% endif %}
+</div>
+
+<!-- Modal Body for Dynamic Content -->
+<div class="modal-body" id="modal-body-content"></div>
+
+{% endblock %}

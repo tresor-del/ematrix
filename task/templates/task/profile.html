@@ -1,0 +1,90 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+
+{% if messages %}
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        {% for message in messages %}
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Notification</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <p>{{ message }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        document.querySelectorAll('.toast').forEach(toastNode => {
+            const toast = new bootstrap.Toast(toastNode);
+            toast.show();
+        });
+    </script>
+{% endif %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <div class="profile-info" id="profile">
+                <div class="profile-image d-flex justify-content-center">
+                    <div>
+                        {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-circle border" width="150" height="150">
+                        {% else %}
+                            <img src="../../../media/images/profile.jpg" alt="Profile Image" class="rounded-circle" width="150" height="150">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="profile-details mt-3">
+                    <h2>{{ user.username }}</h2>
+                    <p>{{ user.email }}</p>
+                    {% if visitor == user %}
+                        <div class="mt-4">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">All</th>
+                                        <th scope="col">Completed</th>
+                                        <th scope="col">Pending</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <th scope="row">Tasks</th>
+                                        <td>{{ task_count }}</td>
+                                        <td>{{ completed_task_count }}</td>
+                                        <td>{{ pending_task_count }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th scope="row">Projects</th>
+                                        <td>{{ project_count }}</td>
+                                        <td>{{ completed_project_count }}</td>
+                                        <td>{{ pending_project_count }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3">
+                            <a href="#" class="btn btn-outline-primary" id="bp" data-id="edit-profile">Edit Profile</a>
+                        </div>
+                    {% else %}
+                        <div class="mt-3">
+                            <a href="#" class="btn btn-outline-secondary">Ask for friendship</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../static/task/javascript/tasks/profile.js"></script>
+
+<!-- Modal Template -->
+<div class="modal-body" id="modal-body-content"></div>
+
+{% endblock %}
