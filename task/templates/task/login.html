@@ -4,17 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login-eMatrix</title>
+    <title>Login - eMatrix</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'task/css/tasks/style.css' %}">
-    <script src="../../static/task/javascript/tasks/dark_or_light.js"></script>
-
+    <script src="{% static 'task/javascript/tasks/dark_or_light.js' %}"></script>
 </head>
 <body>
-        
-    <div class="c container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
         <div class="card p-4" style="max-width: 400px; width: 100%;">
             <div class="card-body">
                 <h1 class="text-center mb-4">eMatrix</h1>
@@ -27,20 +25,31 @@
                         </div>
                     {% endif %}
                     <div class="mb-3">
-                        <input placeholder="Username" type="text" name="username" class="form-control" id="login-email" autofocus required>
+                        <label for="login-username" class="form-label">Username</label>
+                        <input placeholder="Username" type="text" name="username" class="form-control" id="login-username" autofocus required>
                     </div>
                     <div class="mb-3">
+                        <label for="login-password" class="form-label">Password</label>
                         <input placeholder="Password" type="password" name="password" class="form-control" id="login-password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Sign In</button>
-                    
-                    <script>
-                        document.querySelector('#submit').addEventListener('click', function(){
-                            this.disabled = true;
-                            this.textContent = 'Signing In...';
-                        })
-                    </script>
+                    <button type="submit" class="btn btn-primary w-100" id="submit-button" disabled>Sign In</button>
                 </form>
+                <script>
+                    const usernameInput = document.getElementById('login-username');
+                    const passwordInput = document.getElementById('login-password');
+                    const submitButton = document.getElementById('submit-button');
+
+                    function validateForm() {
+                        if (usernameInput.value.trim() !== '' && passwordInput.value.trim() !== '') {
+                            submitButton.disabled = false;
+                        } else {
+                            submitButton.disabled = true;
+                        }
+                    }
+
+                    usernameInput.addEventListener('input', validateForm);
+                    passwordInput.addEventListener('input', validateForm);
+                </script>
             </div>
         </div>
     </div>
@@ -50,4 +59,3 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
-

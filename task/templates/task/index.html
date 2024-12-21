@@ -32,34 +32,87 @@
                 <p class="feature-description">Monitor your progress and track completed tasks to stay motivated.</p>
             </div>
         </div>
-    </div><hr  id="about">
+    </div>
+
+    <!-- Detailed Features Section -->
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-icon">
+                    <i class="bi bi-check-circle"></i>
+                </div>
+                <h3 class="feature-title">Do First</h3>
+                <p class="feature-description">Tasks that are important and urgent. Complete these tasks as soon as possible.</p>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-icon">
+                    <i class="bi bi-clock"></i>
+                </div>
+                <h3 class="feature-title">Schedule</h3>
+                <p class="feature-description">Tasks that are important but not urgent. Schedule these tasks for later.</p>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-icon">
+                    <i class="bi bi-person"></i>
+                </div>
+                <h3 class="feature-title">Delegate</h3>
+                <p class="feature-description">Tasks that are urgent but not important. Delegate these tasks to others.</p>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-icon">
+                    <i class="bi bi-trash"></i>
+                </div>
+                <h3 class="feature-title">Eliminate</h3>
+                <p class="feature-description">Tasks that are neither important nor urgent. Eliminate these tasks.</p>
+            </div>
+        </div>
+    </div>
+    <hr id="about">
+
+    
 
     <!-- About Section -->
     <div class="container py-5 mt-2">
-        <h2 class="text-center mb-4">About eMatrix</h2>
-        <p class="lead text-center">eMatrix helps you stay on top of your tasks and manage your time effectively by using a simple but powerful technique: the Eisenhower Matrix. It helps you decide which tasks are urgent and important, and how to prioritize your time effectively.</p>
-        <p class="text-center">Whether you're working on a big project or managing daily tasks, Task Manager is here to help you achieve your goals with clarity and focus.</p>
+        <h2 class="text-center mb-4" style="font-family: 'Roboto', sans-serif; animation: fadeIn 2s;">About eMatrix</h2>
+        <p class="lead text-center" style="font-family: 'Roboto', sans-serif; animation: fadeIn 2s;">eMatrix helps you stay on top of your tasks and manage your time effectively by using a simple but powerful technique: the Eisenhower Matrix. It helps you decide which tasks are urgent and important, and how to prioritize your time effectively.</p>
+        <p class="text-center" style="font-family: 'Roboto', sans-serif; animation: fadeIn 2s;">Whether you're working on a big project or managing daily tasks, Task Manager is here to help you achieve your goals with clarity and focus.</p>
+
         <div class="m-5">
             <h4 class="text-center m-5">Why Use eMatrix?</h4>
             <div class="row">
                 <div class="col-md-6">
+                    <div class="feature-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
                     <h5 class="feature-title">Better Time Management</h5>
                     <p class="feature-description">With our powerful matrix, you can spend more time focusing on high-priority tasks and reduce time spent on distractions. Use it for both personal and professional tasks.</p>
+                    <blockquote class="blockquote">
+                        <p class="mb-0">"Time management is the key to a balanced life."</p>
+                        <footer class="blockquote-footer m-1">Anonymous</footer>
+                    </blockquote>
                 </div>
                 <div class="col-md-6">
+                    <div class="feature-icon">
+                        <i class="bi bi-lightning-charge"></i>
+                    </div>
                     <h5 class="feature-title">Boost Your Productivity</h5>
                     <p class="feature-description">By organizing your day and knowing exactly what to focus on, you'll complete tasks faster, allowing for more free time to do what you love.</p>
+                    <blockquote class="blockquote">
+                        <p class="mb-0">"Productivity is never an accident. It is always the result of a commitment to excellence, intelligent planning, and focused effort."</p>
+                        <footer class="blockquote-footer m-1" >Paul J. Meyer</footer>
+                    </blockquote>
                 </div>
             </div>
         </div>
-    </div><hr>
+    </div>
+    <hr>
 
     <!-- Call to Action Section -->
     <div class="container text-center py-5" id="start">
-        <h2 class="display-4 mb-4">Get Started Today!</h2>
-        <p class="lead mb-3">It's time to take control of your day and get organized.</p>
-        <a href="{% url 'task:login' %}" class="cta-button">Sign In</a> or 
-        <a href="{% url 'task:register' %}" class="cta-button">Register</a>
+        <h2 class="display-4 mb-4" style="font-family: 'Roboto', sans-serif; animation: fadeIn 2s;">Get Started Today!</h2>
+        <p class="lead mb-3" style="font-family: 'Roboto', sans-serif; animation: fadeIn 2s;">It's time to take control of your day and get organized.</p>
+        <a href="{% url 'task:login' %}" class="btn btn-primary btn-lg mx-2" style="animation: fadeInUp 2s;">Sign In</a>
+        <a href="{% url 'task:register' %}" class="btn btn-secondary btn-lg mx-2" style="animation: fadeInUp 2s;">Register</a>
     </div>
 
     {% endblock %}

@@ -2,91 +2,13 @@
 
 {% block body %}
 
-
-
-            <!-- Statistic -->
-           
-                <div class=" mt-2">
-                 {% for due_date, tasks in page_obj %}   
-                {% if due_date == today %}
-                    <div class="row m-4">
-                        <div class="col-md-12 col-sm-12">
-                            <canvas id="tasksChart" width="400" height="200"></canvas>
-                        </div>
-                    </div>
-                {% endif %}
-                {% endfor %}
-            
-                    <div class="text-center">
-                        <small >Completed Tasks: <span id="c" data-count="{{ today_completed_task_count }}">{{ today_completed_task_count }}</span></small> <span class="opacity-25">|</span> 
-                        <small >Pending Tasks: <span id="p" data-count="{{ today_pending_task_count }}">{{ today_pending_task_count }}</span></small>
-                    </div>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // Initialisation du graphique
-                            var ctx = document.getElementById('tasksChart').getContext('2d');
-                            var completed_task_count = parseInt(document.getElementById('c').textContent.trim());
-                            var pending_task_count = parseInt(document.getElementById('p').textContent.trim());
-                    
-                            var tasksChart = new Chart(ctx, {
-                                type: 'doughnut',
-                                data: {
-                                    labels: ['Completed', 'Pending'],
-                                    datasets: [{
-                                        label: 'Tasks Statistics',
-                                        data: [completed_task_count, pending_task_count],
-                                        backgroundColor: ['#28a745', '#ffc107']
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            display: true,
-                                            position: 'bottom'
-                                        },
-                                        tooltip: {
-                                            callbacks: {
-                                                label: function (tooltipItem) {
-                                                    const value = tooltipItem.raw;
-                                                    const total = tasksChart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-                                                    const percentage = ((value / total) * 100).toFixed(2);
-                                                    return `${tooltipItem.label}: ${value} (${percentage}%)`;
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                    
-                            function updateChart() {
-                                const completed = parseInt(document.getElementById('c').textContent.trim());
-                                const pending = parseInt(document.getElementById('p').textContent.trim());
-                    
-                                tasksChart.data.datasets[0].data = [completed, pending];
-                                tasksChart.update();
-                            }
-                    
-                            function changeTaskCounts() {
-                                const completedElem = document.getElementById('c');
-                                const pendingElem = document.getElementById('p');
-
-                                updateChart();
-                            }
-                            setInterval(changeTaskCounts, 1000);
-                    
-                        });
-                    </script>
-                </div>
-    
             <!-- Eisenhower Matrix displaying all tasks for the current day (is displayed by default)-->
 
-            <div class="container mt-5">
+            <div class="container" style="margin-top: 120px;">
                 <div class="row">
                     <!-- Important and Urgent -->
                     <div class="col-md-6 col-12 mb-3">
-                        <div class="card rounded-0 bg-highlight urgent-important" style="border-left: 5px solid rgb(230, 70, 70) !important; border: 1px solid rgb(204, 118, 118);">
+                        <div class="card rounded-0 urgent-important dark-mode-card" style="border-left: 5px solid rgb(230, 70, 70) !important; border: 1px solid rgb(204, 118, 118);">
                             <div class="card-header bg-none">
                                 <h6>Do first</h6>
                                 <p>Important & urgent</p>
@@ -146,7 +68,7 @@
 
                     <!-- Important but not Urgent -->
                     <div class="col-md-6 col-12 mb-3">
-                        <div class="card rounded-0 bg-highlight not-urgent-important" style="border-left: 5px solid rgb(165, 223, 99) !important; border: 1px solid rgb(148, 206, 137);">
+                        <div class="card rounded-0 bg-highlight not-urgent-important dark-mode-card" style="border-left: 5px solid rgb(165, 223, 99) !important; border: 1px solid rgb(148, 206, 137);">
                             <div class="card-header">
                                 <h6>Schedule</h6>
                                 <p class="mb-0" style="font-size: x-small;">Less urgent, but important</p>
@@ -206,7 +128,7 @@
 
                     <!-- Not Important but Urgent -->
                     <div class="col-md-6 col-12 mb-3">
-                        <div class="card rounded-0 bg-highlight urgent-not-important" style="border-left: 5px solid rgba(98, 201, 233, 0.808) !important; border: 1px solid rgb(148, 190, 207);">
+                        <div class="card rounded-0 bg-highlight urgent-not-important dark-mode-card" style="border-left: 5px solid rgba(98, 201, 233, 0.808) !important; border: 1px solid rgb(148, 190, 207);">
                             <div class="card-header">
                                 <h6>Delegate</h6>
                                 <p class="mb-0">Urgent, but less important</p>
@@ -266,7 +188,7 @@
 
                     <!-- Not Important and Not Urgent -->
                     <div class="col-md-6 col-12 mb-3">
-                        <div class="card rounded-0 bg-highlight not-urgent-not-important" style="border-left: 5px solid rgba(76, 79, 80, 0.808) !important; border: 1px solid rgb(47, 67, 75);">
+                        <div class="card rounded-0 bg-highlight not-urgent-not-important dark-mode-card" style="border-left: 5px solid rgba(76, 79, 80, 0.808) !important; border: 1px solid rgb(47, 67, 75);">
                             <div class="card-header">
                                 <h6>Don't do</h6>
                                 <p class="mb-0">Neither important nor urgent</p>

@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 class CustomUser(AbstractUser):
-    profile_image = models.ImageField(upload_to='images/', null=True, blank=True)
+    profile_image = models.ImageField( upload_to='images/', null=True, blank=True)
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -36,48 +36,6 @@ class Category(models.TextChoices):
     TRAVEL = 'travel', 'Travel' 
     OTHER = 'other', 'Other'
 
-
-## Project models
-
-class Project(models.Model):
-    name = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
-    owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="owned_projects")
-    members = models.ManyToManyField(CustomUser, related_name="projects")
-    created_at = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=20,
-        choices=[('Pending', 'Pending'), ('In Progress', 'In Progress'), ('Completed', 'Completed')],
-        default='Pending'
-    )
-    category = models.CharField(
-         max_length=50,
-         choices= Category.choices,
-         null=True,
-         blank=True
-    )
-
-    def __str__(self):
-        return self.name
-    
-class GroupTask(models.Model):
-    name = models.CharField(max_length=100)
-    description = models.TextField(blank=True, null=True)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='tasks')
-    assigned_to = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(
-        max_length=20,
-        choices=[('Pending', 'Pending'), ('In Progress', 'In Progress'), ('Completed', 'Completed')],
-        default='Pending'
-    )
-    
-    def __str__(self):
-        return self.name
-    
-    
-## Task models
 
 class Priority(models.TextChoices):
         
@@ -130,46 +88,3 @@ class Task(models.Model):
         now = timezone.now().date()
         remaining_time = self.due_date - now
         return remaining_time.days
-
-## Notifications Models 
-
-class Notification(models.Model):
-    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
-    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='receiver')
-    message = models.TextField()
-    is_read = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f" Notification for {self.user.username} at {self.created_at}"
-
-
-class Friends(models.Model):
-    user = models.ForeignKey('CustomUser', on_delete=models.CASCADE)
-    friends = models.ManyToManyField('CustomUser', related_name='collaborators')
-
-    def __str__(self):
-        friends_names = ", ".join([friend.username for friend in self.friends.all()])
-        return f"{self.user.username}'s friends: {friends_names if friends_names else 'No friends'}"
-
-    def get_friends(self):
-        return self.friends.all()
-
-class Comment(models.Model):
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    comment = models.TextField()
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-
-    def __str__(self):
-        return f'{self.author} comment {self.comment}'
-
-class ProjectActivity(models.Model):
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    activity = models.CharField(max_length=150)
-    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'{self.author} make {self.activity}'

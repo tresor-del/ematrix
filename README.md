@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This is a task and project management web application based on the Eisenhower matrix, designed to help users prioritize and organize their tasks and projects efficiently.
+This is a task management web application based on the Eisenhower matrix, designed to help users prioritize and organize their tasks and projects efficiently.
 
 ---
 
@@ -35,18 +35,12 @@ Defines the database schema, including:
 
 - **CustomUser**: Extends Django's User model to support additional user fields.
 - **Task**: Represents tasks with fields for urgency, importance, deadlines, etc.
-- **GroupTask**: Represents tasks for projects.
-- **Friends**: Represents friendships between users.
-- **ProjectActivity**: Tracks project-specific activities.
-- **Notification**: Tracks user-specific alerts and updates.
-- **Project**: Groups related tasks into projects.
-- **Comment**: Stores comments for each project.
 
 #### `views.py`
 
 Contains the core application logic, such as:
 
-- Handling CRUD (Create, Read, Update, Delete) operations for tasks and projects.
+- Handling CRUD (Create, Read, Update, Delete) operations for tasks .
 - Sending JSON responses for AJAX requests.
 - Managing user authentication and authorization.
 - Rendering templates with context data.
@@ -62,7 +56,6 @@ Holds HTML templates for the app’s frontend. Includes templates for:
 - Task creation and management.
 - Eisenhower matrix visualization.
 - User dashboards.
-- Project creation and management.
 - User authentication (login, registration, etc.).
 
 #### `static/`
@@ -131,9 +124,11 @@ Ensure you have the following installed:
 ### Custom Features
 
 - **Drag-and-Drop Task Management**: Users can drag tasks between quadrants of the Eisenhower matrix.
-- **Dynamic Notifications**: Users receive real-time updates about task deadlines and project changes.
-- **Collaborative Projects**: Users can invite friends to collaborate on projects.
-- **Task Comments**: Users can comment on tasks for better communication.
+- **Dark mode**: Users can toggle between light and dark modes using a button in the UI.
+
+### Third-Party Libraries
+
+- **Chart.js**: Used to create data visualizations and analytics.
 
 ### Testing
 
@@ -141,3 +136,4 @@ To run the test suite, use:
 
 ```bash
 python manage.py test
+```
