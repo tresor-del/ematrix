@@ -1,0 +1,353 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+
+
+
+            <!-- Statistic -->
+           
+                <div class=" mt-2">
+                 {% for due_date, tasks in page_obj %}   
+                {% if due_date == today %}
+                    <div class="row m-4">
+                        <div class="col-md-12 col-sm-12">
+                            <canvas id="tasksChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                {% endif %}
+                {% endfor %}
+            
+                    <div class="text-center">
+                        <small >Completed Tasks: <span id="c" data-count="{{ today_completed_task_count }}">{{ today_completed_task_count }}</span></small> <span class="opacity-25">|</span> 
+                        <small >Pending Tasks: <span id="p" data-count="{{ today_pending_task_count }}">{{ today_pending_task_count }}</span></small>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            // Initialisation du graphique
+                            var ctx = document.getElementById('tasksChart').getContext('2d');
+                            var completed_task_count = parseInt(document.getElementById('c').textContent.trim());
+                            var pending_task_count = parseInt(document.getElementById('p').textContent.trim());
+                    
+                            var tasksChart = new Chart(ctx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: ['Completed', 'Pending'],
+                                    datasets: [{
+                                        label: 'Tasks Statistics',
+                                        data: [completed_task_count, pending_task_count],
+                                        backgroundColor: ['#28a745', '#ffc107']
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: true,
+                                            position: 'bottom'
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function (tooltipItem) {
+                                                    const value = tooltipItem.raw;
+                                                    const total = tasksChart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                                    const percentage = ((value / total) * 100).toFixed(2);
+                                                    return `${tooltipItem.label}: ${value} (${percentage}%)`;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                    
+                            function updateChart() {
+                                const completed = parseInt(document.getElementById('c').textContent.trim());
+                                const pending = parseInt(document.getElementById('p').textContent.trim());
+                    
+                                tasksChart.data.datasets[0].data = [completed, pending];
+                                tasksChart.update();
+                            }
+                    
+                            function changeTaskCounts() {
+                                const completedElem = document.getElementById('c');
+                                const pendingElem = document.getElementById('p');
+
+                                updateChart();
+                            }
+                            setInterval(changeTaskCounts, 1000);
+                    
+                        });
+                    </script>
+                </div>
+    
+            <!-- Eisenhower Matrix displaying all tasks for the current day (is displayed by default)-->
+
+            <div class="container mt-5">
+                <div class="row">
+                    <!-- Important and Urgent -->
+                    <div class="col-md-6 col-12 mb-3">
+                        <div class="card rounded-0 bg-highlight urgent-important" style="border-left: 5px solid rgb(230, 70, 70) !important; border: 1px solid rgb(204, 118, 118);">
+                            <div class="card-header bg-none">
+                                <h6>Do first</h6>
+                                <p>Important & urgent</p>
+                            </div>
+                            <div id='important and urgent' class="card-body overflow-auto" style="height: 400px;">
+                                <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                                    <input type="text" class="w-100 rounded-0 mb-5" name="title" placeholder="Add task...">
+                                    <input type="hidden" name="priority" value="important and urgent">
+                                    <button type="submit" class="d-none"></button>
+                                </form>
+                                {% for task in tasks %}
+                                    {% if task.priority == 'important and urgent' %}
+                                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:rgb(224, 130, 130) !important;">
+                                        <p class="p-0 m-0">
+                                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                                            <span class="task-title start-focus" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                                {% if task.completed %}<del class="opacity-50">{{ task.title }}</del>{% else %}{{ task.title }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex">
+                                            {% if task.completed %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="{% if task.completed %}true{% else %}false{% endif %}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% else %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0 " data-status="{% if task.completed %}true{% else %}false{% endif %}" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% endif %}
+                                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Important but not Urgent -->
+                    <div class="col-md-6 col-12 mb-3">
+                        <div class="card rounded-0 bg-highlight not-urgent-important" style="border-left: 5px solid rgb(165, 223, 99) !important; border: 1px solid rgb(148, 206, 137);">
+                            <div class="card-header">
+                                <h6>Schedule</h6>
+                                <p class="mb-0" style="font-size: x-small;">Less urgent, but important</p>
+                            </div>
+                            <div id='important but not urgent' class="card-body overflow-auto" style="height: 400px;">
+                                <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                                    <input type="text" class="rounded-0 mb-5 w-100" name="title" placeholder="Add task...">
+                                    <input type="hidden" name="priority" value="important but not urgent">
+                                    <button type="submit" class="d-none"></button>
+                                </form>
+                                {% for task in tasks %}
+                                    {% if task.priority == 'important but not urgent' %}
+                                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:rgb(148, 206, 137);">
+                                        <p class="p-0 m-0">
+                                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                                            <span class="task-title start-focus" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                                {% if task.completed %}<del class="opacity-50">{{ task.title }}</del>{% else %}{{ task.title }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex">
+                                            {% if task.completed %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="{% if task.completed %}true{% else %}false{% endif %}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% else %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0 " data-status="{% if task.completed %}true{% else %}false{% endif %}" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% endif %}
+                                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Not Important but Urgent -->
+                    <div class="col-md-6 col-12 mb-3">
+                        <div class="card rounded-0 bg-highlight urgent-not-important" style="border-left: 5px solid rgba(98, 201, 233, 0.808) !important; border: 1px solid rgb(148, 190, 207);">
+                            <div class="card-header">
+                                <h6>Delegate</h6>
+                                <p class="mb-0">Urgent, but less important</p>
+                            </div>
+                            <div id='not important but ugent' class="card-body overflow-auto" style="height: 400px;">
+                                <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                                    <input type="text" class="w-100 rounded-0 mb-5" name="title" placeholder="Add task...">
+                                    <input type="hidden" name="priority" value="not important but ugent">
+                                    <button type="submit" class="d-none"></button>
+                                </form>
+                                {% for task in tasks %}
+                                    {% if task.priority == 'not important but ugent' %}
+                                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:rgba(98, 201, 233, 0.808) !important;">
+                                        <p class="p-0 m-0">
+                                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                                            <span class="task-title start-focus" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                                {% if task.completed %}<del class="opacity-50">{{ task.title }}</del>{% else %}{{ task.title }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex">
+                                            {% if task.completed %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="{% if task.completed %}true{% else %}false{% endif %}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% else %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0 " data-status="{% if task.completed %}true{% else %}false{% endif %}" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% endif %}
+                                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Not Important and Not Urgent -->
+                    <div class="col-md-6 col-12 mb-3">
+                        <div class="card rounded-0 bg-highlight not-urgent-not-important" style="border-left: 5px solid rgba(76, 79, 80, 0.808) !important; border: 1px solid rgb(47, 67, 75);">
+                            <div class="card-header">
+                                <h6>Don't do</h6>
+                                <p class="mb-0">Neither important nor urgent</p>
+                            </div>
+                            <div id='not important and not urgent' class="card-body overflow-auto" style="height: 400px;">
+                                <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                                    <input type="text" class="w-100 rounded-0 mb-5" name="title" placeholder="Add task...">
+                                    <input type="hidden" name="priority" value="not important and not urgent">
+                                    <button type="submit" class="d-none"></button>
+                                </form>
+                                {% for task in tasks %}
+                                    {% if task.priority == 'not important and not urgent' %}
+                                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:rgba(76, 79, 80, 0.808) !important;">
+                                        <p class="p-0 m-0">
+                                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                                            <span class="task-title" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                                {% if task.completed %}<del class="opacity-50">{{ task.title }}</del>{% else %}{{ task.title }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex">
+                                            {% if task.completed %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="{% if task.completed %}true{% else %}false{% endif %}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% else %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0 " data-status="{% if task.completed %}true{% else %}false{% endif %}" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% endif %}
+                                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+<!-- Modal Template -->
+
+<div class="modal-body" id="modal-body-content"></div>
+
+
+
+
+{% endblock %}
+<!-- Task Due Date -->
+<label for="id_due_date" class="form-label fw-bold">📅 Due Date</label>
+<div class="input-group">
+    {{ form.due_date }}
+    <button type="button" onclick="
+        const today = today.toLocaleDateString('fr-FR', {
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric'
+              });;
+        document.querySelector('#due_date').value = today;
+    " class="btn btn-link text-decoration-none" id="today-btn">Today</button>
+    <span class="input-group-text" id="calendar-button" >
+        <i class="bi bi-calendar"></i>
+    </span>
+</div>

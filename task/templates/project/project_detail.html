@@ -1,0 +1,364 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+<div class="container py-5">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col text-center">
+            <small>{{ project.created_at|date:"F j, Y" }} by {{ project.owner.username }}</small>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <h1 class="text-primary mb-0" id="project-name" data-id="{{ project.id }}">{{ project.name }}</h1>
+                {% if request.user == project.owner %}
+                <div class="dropdown ms-3">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <div class="dropdown-menu p-3 shadow-sm" style="min-width: 300px;">
+                        <small class="text-center d-block mb-2">Change Project Name</small>
+                        <form id="change-name-form" action="#" method="post">
+                            {% csrf_token %}
+                            <input class="form-control mb-2" name="name" id="new-name" value="{{ project.name }}">
+                            <button type="button" id="change-name-btn" class="btn btn-primary btn-sm w-100">Save</button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <small class="d-flex align-items-center mt-2">
+                <span id="current-status">{{ project.status }}</span>
+                {% if request.user == project.owner %}
+                <div class="dropdown ms-2">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#" class="dropdown-item project-status" data-id="{{ project.id }}" data-status="In Progress">
+                                In Progress
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="dropdown-item project-status" data-id="{{ project.id }}" data-status="Completed">
+                                Completed
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </small>
+        </div>
+            
+        <div class="col-md-4 d-flex justify-content-end">
+            {% if request.user == project.owner %}
+            <div class="dropdown">
+                <!-- Main Button -->
+                <button type="button" class="btn btn-primary m-1 dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside">
+                    Add Task
+                </button>
+        
+                <!-- Form inside the dropdown -->
+                <form class="dropdown-menu p-4 shadow-lg rounded" id="new-task-form" method="post"  style="min-width: 300px;">
+                    {% csrf_token %}
+                    <h6 class="dropdown-header text-center mb-3">Create New Task</h6>
+                    
+                    <!-- Project Name Field -->
+                    <div class="form-group mb-3">
+                        <label for="id_name" class="form-label">Task Name</label>
+                        {{ form.name }}
+                    </div>
+                
+                    <!-- Members Selection -->
+                    <div class="form-group mb-3">
+                        <label for="id_members" class="form-label">Assigned to:</label>
+                        {{ form.assigned_to }}
+                    </div>
+                
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-center gap-2">
+                        <button type="button" class="btn btn-success" id="new-task-btn" data-id="{{ project.id }}">
+                            <i class="bi bi-check-circle"></i> Create
+                        </button>
+                    </div>
+                </form>
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function(){
+                        const createNewProjectButton = document.querySelector('#new-task-btn');
+                        createNewProjectButton.addEventListener('click', function(){
+                            const form = document.querySelector('#new-task-form');
+                            NewProjectTask(this.dataset.id, form);
+                        });
+                    });
+
+                    function NewProjectTask(projectId, form) {
+                        fetch(`/project/${projectId}/new_task/`, {
+                            method: 'POST',
+                            body: new FormData(form),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.message) {
+                                Swal.fire({
+                                    title: 'Task Created',
+                                    text: 'Task created successfully',
+                                    icon: 'success',
+                                    confirmButtonText: 'Got it!',
+                                    timer: 3000,
+                                    customClass: {
+                                        popup: 'custom-popup',
+                                        title: 'custom-title',
+                                        confirmButton: 'custom-button'
+                                    }
+                                });
+
+                                location.reload();
+                            } else {
+                                console.error('Erreur côté serveur :', data.error || 'Tâche non ajoutée.');
+                            }
+                        })
+                        .catch(error => console.error('Error fetching new task:', error));
+                    }
+                </script>
+            </div>
+            <form action="{% url 'task:delete_project' project.id %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this project?');">
+                {% csrf_token %}
+                <button class="btn btn-danger m-1" type="submit">Delete this project</button>
+            </form>
+            <button class="btn btn-secondary m-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                Manage Members
+            </button>
+
+            <!-- Offcanvas Component -->
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Manage Members</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <h5>Add Members</h5>
+                    <hr>
+                    <div class="d-flex" role="search">
+                        <input type="text" id="usernameInput" class="form-control me-2" placeholder="Enter friends to add">
+                        <button id="addMemberBtn" class="btn btn-outline-success">Search</button>
+                    </div>
+
+                    <div id="loading" class="text-center mt-3" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div id="presults" class="mt-4">
+                        <div class="presults-container">
+                        <p class="text-center d-none" id="pno-results">No user found. Try searching with a different username.</p>
+                    </div>
+                    
+                    <h5>Current Members</h5>
+                    <hr>
+                    <ul id="memberList" class="list-group">
+                        {% for member in project.members.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <img src="{{ member.profile_image.url }}" alt="{{ member.username }}'s profile picture" class="rounded-circle border me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                                    {{ member.username }}
+                                </div>
+                                {% if request.user == project.owner %}
+                                    <button class="btn btn-sm btn-danger removeMemberBtn" data-id="{{ member.id }}">Remove</button>
+                                {% endif %}
+                            </li>
+                        {% empty %}
+                            <li class="list-group-item">No members added yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            {% else %}
+                <form action="{% url 'task:get_out_project' project.id %}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to get out of this project?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Leave Project</button>
+                </form>
+            {% endif %}
+
+            <button class="btn btn-secondary m-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvas" aria-controls="offcanvasExample">
+                Activities
+            </button>
+
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasExampleLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Manage Members</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    {% for activity in activities %}
+                    <div class="mb-3 d-flex align-items-start">
+                        <div>
+                            <img src="{{ activity.author.profile_image.url }}" alt="{{ activity.author.username }}'s profile picture" class="rounded-circle border me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                            <strong>{{ activity.author }}</strong> <small>{{ activity.created_at|date:"F j, Y, g:i a" }}</small>
+                            <p>{{ activity.activity }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                        No activity recently
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <p class="p-0 m-0 me-2"><strong>Description :</strong></p>
+            {% if request.user == project.owner %}
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-pencil"></i>
+                </a>
+                <div class="dropdown-menu p-3 shadow-sm" style="min-width: 300px;">
+                    <small class="text-center d-block mb-2">Change Description</small>
+                    <form id="change-description-form" action="#" method="post">
+                        {% csrf_token %}
+                        <textarea class="form-control mb-2" name="description" id="new-description" rows="3">{{ project.description }}</textarea>
+                        <button type="button" id="change-description-btn" class="btn btn-primary btn-sm w-100">Save</button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+            <small id="project-description">{{ project.description }}</small>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <h5 class="mt-4">All tasks</h5>
+            <hr>
+            <ul class="list-group m-2" id="task-container">
+                {% for task in project.tasks.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center mb-2 task" style="background-color: antiquewhite;">
+                        <strong><a href="#" class="detail" data-id="{{ task.id }}">{{ task.name }}</a> | <small class="new-status">{{ task.status }}</small></strong>
+                        {% if task.assigned_to == request.user %}
+                        <span>Assigned to you</span>  
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle mr-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="#" class="dropdown-item status" data-id="{{ task.id }}" data-status="In Progress">
+                                        In Progress
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" class="dropdown-item status" data-id="{{ task.id }}" data-status="Completed">
+                                        Completed
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        {% else %}
+                        <span>Assigned to {{ task.assigned_to.username }}</span>
+                        {% endif %}
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No tasks created yet.</li>
+                {% endfor %}
+                
+                {% if request.user != project.owner %}
+                <h5 class="mt-4">Assigned to you</h5>
+                <hr>
+                    {% for task in project.tasks.all %}
+                        {% if task.assigned_to == request.user %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center mb-2 task" style="background-color: aquamarine;">
+                                <strong><a href="#" class="detail" data-id="{{ task.id }}">{{ task.name }}</a> | <small class="new-status">{{ task.status }}</small></strong>
+                                <span>Assigned to you</span>  
+                                <div class="dropdown">
+                                    <a class="nav-link dropdown-toggle mr-3" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="#" class="dropdown-item status" data-id="{{ task.id }}" data-status="In Progress">
+                                                In Progress
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item status" data-id="{{ task.id }}" data-status="Completed">
+                                                Completed
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="row mt-5">
+        <div class="col">
+            <h5>Comments</h5>
+            <hr>
+            <div id="comment-container" style="max-height: 400px; overflow-y: scroll;">
+                {% for comment in comments %}
+                    <div class="mb-3 d-flex align-items-start">
+                        <img src="{{ comment.author.profile_image.url }}" alt="{{ comment.author.username }}'s profile picture" class="rounded-circle border me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                        <div>
+                            <strong>{{ comment.author }}</strong> <small>{{ comment.created_at|date:"F j, Y, g:i a" }}</small>
+                            <p>{{ comment.comment }}</p>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No comments yet.</p>
+                {% endfor %}
+            </div>
+            <form id="comment-form" action="{% url 'task:comment' project.id %}" method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <textarea class="form-control" name="comment" rows="3" placeholder="Add a comment..."></textarea>
+                </div>
+                <button type="button" id="comment-btn" class="btn btn-primary">Post Comment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Back to Projects Button -->
+    <div class="row mt-5">
+        <div class="col text-center">
+            <a href="{% url 'task:project' %}" class="btn btn-outline-secondary">Back to Projects</a>
+        </div>
+    </div>
+
+    <div class="modal-body" id="modal-body-content"></div>
+</div>
+
+<script>
+    document.querySelectorAll(".detail").forEach(btn => {
+        btn.addEventListener('click', function(){
+            loadTaskDetails(this.dataset.id);
+        });
+    });
+
+    function loadTaskDetails(taskId) {
+        fetch(`/project/task_detail/${taskId}`)
+            .then(response => response.text())
+            .then(data => {
+                displayModal(data);
+            });
+    }
+
+    function displayModal(content) {
+        document.getElementById('modal-body-content').innerHTML = content;
+        const taskModal = new bootstrap.Modal(document.getElementById('taskModal'), { keyboard: false });
+        taskModal.show();
+    }
+</script>
+{% endblock %}
