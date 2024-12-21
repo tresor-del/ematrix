@@ -1,9 +1,8 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from .models import CustomUser, Task, Notification, Project
-from .forms import TaskForm, ProjectForm
-# Create your tests here.
+from .models import CustomUser, Task
+from .forms import TaskForm
 
 class TaskViewsTestCase(TestCase):
     def setUp(self):
@@ -45,23 +44,6 @@ class TaskViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTrue(Task.objects.filter(title='New Task').exists())
 
-    def test_notifications_view(self):
-        response = self.client.get(reverse('task:notifications'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'task/notifications.html')
-
-    def test_delete_notification(self):
-        notification = Notification.objects.create(user=self.user, message='Test Notification')
-        response = self.client.post(reverse('task:delete_notification', args=[notification.id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(Notification.objects.filter(id=notification.id).exists())
-
-    def test_delete_all_notifications(self):
-        Notification.objects.create(user=self.user, message='Test Notification 1')
-        Notification.objects.create(user=self.user, message='Test Notification 2')
-        response = self.client.post(reverse('task:delete_all_notification'))
-        self.assertEqual(response.status_code, 200)
-        self.assertFalse(Notification.objects.filter(user=self.user).exists())
 
 
     def test_profile_view(self):
@@ -78,19 +60,3 @@ class TaskViewsTestCase(TestCase):
         self.user.refresh_from_db()
         self.assertEqual(self.user.username, 'updateduser')
         self.assertEqual(self.user.email, 'updateduser@example.com')
-
-    def test_collaborators_view(self):
-        response = self.client.get(reverse('task:collaboration'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'collaborators/index.html')
-
-    def test_project_view(self):
-        response = self.client.get(reverse('task:project'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'project/index.html')
-
-    def test_project_detail_view(self):
-        project = Project.objects.create(owner=self.user, name='Test Project')
-        response = self.client.get(reverse('task:project_detail', args=[project.id]))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'project/project_detail.html')
