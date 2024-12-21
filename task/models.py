@@ -45,6 +45,11 @@ class Project(models.Model):
     owner = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="owned_projects")
     members = models.ManyToManyField(CustomUser, related_name="projects")
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('Pending', 'Pending'), ('In Progress', 'In Progress'), ('Completed', 'Completed')],
+        default='Pending'
+    )
     category = models.CharField(
          max_length=50,
          choices= Category.choices,
@@ -89,7 +94,7 @@ class Task(models.Model):
     description = models.TextField(max_length=300, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
-    due_date= models.DateField(null=True, blank=True)
+    due_date= models.DateField(auto_now=True, null=True, blank=True)
     completed = models.BooleanField(default=False)
     priority = models.CharField(
          max_length=50,
@@ -101,11 +106,10 @@ class Task(models.Model):
          null=True,
          blank=True
     )
-    due_date = models.DateField()
 
 
     def __str__(self):
-         return {self.title}
+         return self.title
 
     def serialize(self):
          return {
@@ -160,3 +164,12 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'{self.author} comment {self.comment}'
+
+class ProjectActivity(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    activity = models.CharField(max_length=150)
+    author = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.author} make {self.activity}'

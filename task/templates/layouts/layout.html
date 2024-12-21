@@ -29,6 +29,9 @@
         <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js" crossorigin></script>
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
+    <!-- Sortable.js CDN -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+
     <!-- CSS Link -->
         <link rel="stylesheet" href="{% static 'task/css/tasks/main.css' %}">
         <link rel="stylesheet" href="{% static 'task/css/tasks/calendar.css' %}">
@@ -36,9 +39,11 @@
         <link rel="stylesheet" href="{% static 'task/css/tasks/profile.css' %}">
         <link rel="stylesheet" href="{% static 'task/css/tasks/eisenhowerMatrix.css' %}">
 
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <!-- JS Link -->
-        <script src="../../static/task/javascript/tasks/dark_or_light.js"></script>
-        <script src="../../static/task/javascript/tasks/calendar.js"></script>
         <script src="{% static 'task/javascript/tasks/notifications.js' %}"></script>
         <script src="{% static 'task/javascript/tasks/deleteAllNotification.js' %}"></script>
         <script src="{% static 'task/javascript/tasks/deleteSingleNotification.js' %}"></script>
@@ -51,104 +56,78 @@
         <script src="{% static 'task/javascript/projects/create_task.js' %}"></script>
         <script src="{% static 'task/javascript/projects/tasks_status.js' %}"></script>
         <script src="{% static 'task/javascript/projects/load_task_details.js' %}"></script>
+        <script src="{% static 'task/javascript/tasks/drag-and-drop.js' %}"></script>
+        <script src="{% static 'task/javascript/tasks/settings.js' %}"></script>
+        <script src="{% static 'task/javascript/projects/events.js' %}"></script>
 
-</head>
-<body class="d-flex flex-column min-vh-100 " id="body">
+
+</head> 
+<body class="d-flex flex-column min-vh-100 bg-{{ user_settings.background_color }} " id="body" >
 
     {% if user.is_authenticated %}
 
     <!-- Large screen navbar -->
-    <aside class="navbar navbar1 navbar-expand-lg d-none d-lg-flex position-fixed top-0 start-0 vh-100  d-flex ">
-        <div class="container-fluid d-flex d-none d-lg-flex  flex-column">
+    <aside class="navbar navbar1 navbar-expand-lg d-none d-lg-flex position-fixed top-0 start-0 vh-100 d-flex">
+        <div class="container-fluid d-flex flex-column">
             <!-- Brand Logo/Name -->
-            <div class="brand-container">
+            <div class="brand-container mb-4">
                 <a class="navbar-brand" href="{% url 'task:index' %}">
                     <div class="brand d-flex align-items-center">
                         <h1 class="m-0">eMatrix</h1>
                     </div>
                 </a>
             </div>
-    
+
             <!-- Navbar Toggler -->
             <button class="navbar-toggler mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-    
+
             <!-- Navbar Links -->
             <div class="collapse navbar-collapse flex-grow-1" id="navbarNav">
                 <ul class="navbar-nav flex-column mb-auto">
-                
-                    <!-- Dashboard Link -->
-                    <li class="nav-item">
-                        <a class="nav-link n" id="button" href="{% url 'task:dashboard' %}">
-                            <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                        </a>
-                    </li>
-                
                     <!-- Tasks Link -->
-                    <li class="nav-item">
+                    <li class="nav-item mb-2">
                         <a class="nav-link n" href="{% url 'task:tasks' %}">
                             <i class="bi bi-list-check me-2"></i>Tasks
                         </a>
                     </li>
-                
+
                     <!-- Projects Link -->
-                    <li class="nav-item">
-                        <a class="nav-link n" href="{% url 'task:project' %}" >
+                    <li class="nav-item mb-2">
+                        <a class="nav-link n" href="{% url 'task:project' %}">
                             <i class="bi bi-folder me-2"></i>Projects
                         </a>
                     </li>
 
                     <!-- Collaboration Link -->
-                    <li class="nav-item">
-                        <a class="nav-link n"  href="{% url 'task:collaboration' %}">
+                    <li class="nav-item mb-2">
+                        <a class="nav-link n" href="{% url 'task:collaboration' %}">
                             <i class="bi bi-people me-2"></i>Friends
                         </a>
                     </li>
-                    
-                
-                    <!-- Calendar Link -->
-                    <li class="nav-item">
-                        <a class="nav-link n " href="{% url 'task:calendar' %}">
-                            <i class="bi bi-calendar-event me-2"></i>Calendar
-                        </a>
-                    </li>
-                
+
                     <!-- Notifications -->
-                    <li class="nav-item">
-                        <a href="{% url 'task:notifications' %}" class="nav-link m4 n" >
+                    <li class="nav-item mb-2">
+                        <a href="{% url 'task:notifications' %}" class="nav-link m4 n">
                             <i class="bi bi-bell me-2"></i>Notifications {% if notifications %}<span class="badge text-bg-secondary">{{ notifications|length }}</span>{% endif %}
                         </a>
                     </li>
-                
+
                     <!-- Profile Link -->
-                    <li class="nav-item">
+                    <li class="nav-item mb-2">
                         <a class="nav-link n" href="{% url 'task:profile' user.id %}">
                             <i class="bi bi-person-circle me-2"></i>Profile
                         </a>
                     </li>
-                
-                    <!-- Settings Link -->
-                    <li class="nav-item">
-                        <a class="nav-link n disabled" href="task:/settings">
-                            <i class="bi bi-gear me-2"></i>Settings
-                        </a>
-                    </li>
-                
-                    <!-- Dark/Light Mode Toggle -->
-                    <li class="nav-item">
-                        <a class="nav-link mode-toggle" style="cursor: pointer;">
-                            <i class="bi bi-moon me-2" id="themeIcon"></i>Dark Mode
-                        </a>
-                    </li>
-                
+
                     <!-- Logout Link -->
                     <li class="nav-item">
                         <a class="nav-link n" href="{% url 'task:logout' %}">
                             <i class="bi bi-box-arrow-right me-2"></i>Logout
                         </a>
                     </li>
-                </ul>                
+                </ul>
             </div>
         </div>
     </aside>
@@ -164,15 +143,6 @@
                     </div>
                     
                 </a>
-
-                <!-- Dashboard Link -->
-                <ul class="navbar-nav d-flex m-1">
-                    <li class="nav-item">
-                        <a class="nav-link n" id="button" href="{% url 'task:dashboard' %}">
-                            <i class="bi bi-speedometer2 me-2"></i>
-                        </a>
-                    </li>
-                </ul>
 
                 <!-- Tasks Link -->
                 <ul class="navbar-nav d-flex m-1">
@@ -203,15 +173,7 @@
 
                 </ul>
 
-                <!-- Calendar Link -->
-                <ul class="navbar-nav d-flex m-1">
-                    <li class="nav-item">
-                        <a class="nav-link n" href="{% url 'task:calendar' %}">
-                            <i class="bi bi-calendar-event me-2"></i>
-                        </a>
-                    </li>
-
-                </ul>
+                
              </div>
 
              <!-- Navbar Toggler -->
@@ -235,20 +197,6 @@
                     <li class="nav-item">
                         <a href="{% url 'task:notifications' %}" class="nav-link m4 n" >
                             <i class="bi bi-bell me-2"></i>Notifications {% if notifications %}<span class="badge text-bg-secondary">{{ notifications|length }}</span>{% endif %}
-                        </a>
-                    </li>
-
-                     <!-- Dark/Light Mode Toggle -->
-                    <li class="nav-item">
-                        <a class="nav-link mode-toggle" style="cursor: pointer;">
-                            <i class="bi bi-moon me-2" id="themeIcon"></i>Dark Mode
-                        </a>
-                    </li>
-
-                    <!-- Settings Link -->
-                    <li class="nav-item">
-                        <a class="nav-link n disabled" href="task:/settings">
-                            <i class="bi bi-gear me-2"></i>Settings
                         </a>
                     </li>
                     

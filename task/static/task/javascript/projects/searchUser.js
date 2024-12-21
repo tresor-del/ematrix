@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function(){
         if (!query) return;
 
 
-        fetch(`/project/search_members?search=${query}`)
+        fetch(`/project/search_members/?search=${query}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     // Add member via AJAX
     function addMember (userId) {
-        const projectId = document.querySelector('#project').dataset.id;
+        const projectId = document.querySelector('#project-name').dataset.id;
         fetch(`/project/${projectId}/add_member/`, {
             method: 'POST',
             headers: {

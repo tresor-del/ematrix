@@ -5,7 +5,6 @@
     z-index: 1000;
     background-color: var(--background-color) !important; 
     box-shadow: 0 1px 1px var(--text-color);
-    width: 250px;
     transition: all 1s ease-in-out;
 }
 
@@ -15,7 +14,6 @@
 
 
 .ac{
-    border-left: 2px solid var(--primary-color); 
     color: var(--primary-color) !important;
 }
 

@@ -1,14 +1,15 @@
 document.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('.status').forEach( btn => {
         btn.addEventListener('click', function(){
-            const project = document.querySelector('#project');
+            const project = document.querySelector('#project-name');
             const projectId = project.dataset.id
-            changeStatus(this.dataset.status, projectId, this.dataset.id);
+            changeStatus(btn, this.dataset.status, projectId, this.dataset.id);
         });
     });
 
 
-function changeStatus(status, projectId, taskId ){
+function changeStatus(element,status, projectId, taskId ){
+    console.log(element)
     fetch(`/project/${projectId}/task/${taskId}/status`, {
         method: 'PUT',
         body: JSON.stringify({
@@ -18,7 +19,21 @@ function changeStatus(status, projectId, taskId ){
     .then(response => response.json())
     .then(data => {
         console.log(data);
-        document.querySelector('#status').innerHTML= status;
+        if (status === 'Completed'){
+            Swal.fire({
+                title: 'Task Completed',
+                text: 'Congratulation for completing this task. You are on the right way',
+                icon: 'success',
+                confirmButtonText: 'Got it!',
+                customClass: {
+                    popup: 'custom-popup',
+                    title: 'custom-title',
+                    confirmButton: 'custom-button'
+                }
+            });
+        }
+        
+        element.closest('.task').querySelector('.new-status').innerHTML = status;
     })
 
     

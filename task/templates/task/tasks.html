@@ -4,174 +4,30 @@
 
 
 
-{% if not page_obj %}
-
-    <!-- If there is no tasks, invite users to create some (handled by React)-->
-    <div id="app"></div>
-
-{% else %}
-<div class="container">
-    <!-- Button to Add New Task -->
-            <div class=" mt-4">
-                <a href="#" class="btn btn-secondary m-1 m3">
-                    <i class="bi bi-plus-circle me-2"></i>Add New Task
-                </a>
-            </div>
-            
-    {% for due_date, tasks in page_obj %}
-    
-    <div class="pagination d-flex justify-content-between align-items-center m-3">
-        <!-- Bouton Précédent -->
-        {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-chevron-left"></i> <!-- Icône de Bootstrap -->
-                <span class="d-none d-md-inline">Previous</span> <!-- Texte masqué sur petits écrans -->
-            </a>
-        {% endif %}
-    
-        <!-- Affichage de la Date -->
-        <h4 class="text-center mx-2 my-0">
-            {% if due_date == today.date %}
-                <span id="today" class="badge bg-primary text-white py-2 px-3">{{ today }}</span>
-            {% else %}
-                <span id="{{ due_date }}" class="badge bg-secondary text-white py-2 px-3">{{ due_date }}</span>
-            {% endif %}
-        </h4>
-    
-        <!-- Bouton Suivant -->
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-outline-secondary btn-sm">
-                <span class="d-none d-md-inline">Next</span> <!-- Texte masqué sur petits écrans -->
-                <i class="bi bi-chevron-right"></i> <!-- Icône de Bootstrap -->
-            </a>
-        {% endif %}
-    </div>
-    
-        
-             <!-- Pages displayed dynamically by React -->
-
-            <!-- Eisenhower Matrix displaying all tasks for the current day (is displayed by default)-->
-            <div class="container-fluid px-2 px-sm-3">
-                <div class="row">
-                    <!-- Eisenhower Matrix -->
-                    <div class="col-12">
-                        <div class="eisenhower-matrix d-grid gap-3">
-                            <!-- Important and Urgent -->
-                            <div class="card urgent-important">
-                                <div class="card-header bg-danger text-white">
-                                    <h6>&#x26A0;&#xFE0F; Important and Urgent</h6> <!-- ⚠️ -->
-                                    <p class="mb-0">To do</p>
-                                </div>
-                                <div class="card-body overflow-auto" style="max-height: 400px;">
-                                    {% for task in tasks %}
-                                        {% if task.priority == 'important and urgent' %}
-                                            {% if task.completed %}
-                                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
-                                                    &#x2705; <!-- ✅ --> {{ task.title }}
-                                                </a>
-                                            {% else %}
-                                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
-                                                    &#x23F3; <!-- ⏳ --> {{ task.title }}
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-            
-                            <!-- Important but not Urgent -->
-                            <div class="card not-urgent-important">
-                                <div class="card-header bg-warning text-dark">
-                                    <h6>&#x1F6A8; Important but not Urgent</h6> <!-- 🚨 -->
-                                    <p class="mb-0">To planify</p>
-                                </div>
-                                <div class="card-body overflow-auto" style="max-height: 400px;">
-                                    {% for task in tasks %}
-                                        {% if task.priority == 'important but not urgent' %}
-                                            {% if task.completed %}
-                                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
-                                                    &#x2705; <!-- ✅ --> {{ task.title }}
-                                                </a>
-                                            {% else %}
-                                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
-                                                    &#x23F3; <!-- ⏳ --> {{ task.title }}
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-            
-                            <!-- Not Important but Urgent -->
-                            <div class="card urgent-not-important">
-                                <div class="card-header bg-info text-white">
-                                    <h6>&#x23F3; Not Important but Urgent</h6> <!-- ⏳ -->
-                                    <p class="mb-0">To delegate</p>
-                                </div>
-                                <div class="card-body overflow-auto" style="max-height: 400px;">
-                                    {% for task in tasks %}
-                                        {% if task.priority == 'not important but urgent' %}
-                                            {% if task.completed %}
-                                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
-                                                    &#x2705; <!-- ✅ --> {{ task.title }}
-                                                </a>
-                                            {% else %}
-                                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
-                                                    &#x1F4E4; <!-- 📤 --> {{ task.title }}
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-            
-                            <!-- Not Important and Not Urgent -->
-                            <div class="card not-urgent-not-important">
-                                <div class="card-header bg-secondary text-white">
-                                    <h6>&#x1F5D1;&#xFE0F; Not Important and Not Urgent</h6> <!-- 🗑️ -->
-                                    <p class="mb-0">To delete</p>
-                                </div>
-                                <div class="card-body overflow-auto" style="max-height: 400px;">
-                                    {% for task in tasks %}
-                                        {% if task.priority == 'not important and not urgent' %}
-                                            {% if task.completed %}
-                                                <a href="#" class="btn btn-sm btn-success m-1 m" data-id="{{ task.id }}">
-                                                    &#x2705; <!-- ✅ --> {{ task.title }}
-                                                </a>
-                                            {% else %}
-                                                <a href="#" class="btn btn-sm btn-warning m-1 m" data-id="{{ task.id }}">
-                                                    &#x1F5D1;&#xFE0F; <!-- 🗑️ --> {{ task.title }}
-                                                </a>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            
-            
-   
             <!-- Statistic -->
-            {% if due_date == today %}
+           
                 <div class=" mt-2">
-                    <small class="d-none" id="c">{{ today_completed_task_count }}</small>  
-                    <small class="d-none" id="p">{{ today_pending_task_count }}</small>
-                    
+                 {% for due_date, tasks in page_obj %}   
+                {% if due_date == today %}
                     <div class="row m-4">
                         <div class="col-md-12 col-sm-12">
                             <canvas id="tasksChart" width="400" height="200"></canvas>
                         </div>
                     </div>
+                {% endif %}
+                {% endfor %}
+            
+                    <div class="text-center">
+                        <small >Completed Tasks: <span id="c" data-count="{{ today_completed_task_count }}">{{ today_completed_task_count }}</span></small> <span class="opacity-25">|</span> 
+                        <small >Pending Tasks: <span id="p" data-count="{{ today_pending_task_count }}">{{ today_pending_task_count }}</span></small>
+                    </div>
                     <script>
                         document.addEventListener('DOMContentLoaded', function () {
+                            // Initialisation du graphique
                             var ctx = document.getElementById('tasksChart').getContext('2d');
-                            const completed_task_count = parseInt(document.getElementById('c').textContent.trim());
-                            const pending_task_count = parseInt(document.getElementById('p').textContent.trim());
-
+                            var completed_task_count = parseInt(document.getElementById('c').textContent.trim());
+                            var pending_task_count = parseInt(document.getElementById('p').textContent.trim());
+                    
                             var tasksChart = new Chart(ctx, {
                                 type: 'doughnut',
                                 data: {
@@ -183,36 +39,292 @@
                                     }]
                                 },
                                 options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'bottom'
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function (tooltipItem) {
-                                        const value = tooltipItem.raw;
-                                        const total = completed_task_count + pending_task_count;
-                                        const percentage = ((value / total) * 100).toFixed(2);
-                                        return `${tooltipItem.label}: ${value} (${percentage}%)`;
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: {
+                                        legend: {
+                                            display: true,
+                                            position: 'bottom'
+                                        },
+                                        tooltip: {
+                                            callbacks: {
+                                                label: function (tooltipItem) {
+                                                    const value = tooltipItem.raw;
+                                                    const total = tasksChart.data.datasets[0].data.reduce((a, b) => a + b, 0);
+                                                    const percentage = ((value / total) * 100).toFixed(2);
+                                                    return `${tooltipItem.label}: ${value} (${percentage}%)`;
+                                                }
+                                            }
+                                        }
                                     }
                                 }
-                            }
-                        }
-                    }
-                });
-            });
+                            });
                     
+                            function updateChart() {
+                                const completed = parseInt(document.getElementById('c').textContent.trim());
+                                const pending = parseInt(document.getElementById('p').textContent.trim());
+                    
+                                tasksChart.data.datasets[0].data = [completed, pending];
+                                tasksChart.update();
+                            }
+                    
+                            function changeTaskCounts() {
+                                const completedElem = document.getElementById('c');
+                                const pendingElem = document.getElementById('p');
+
+                                updateChart();
+                            }
+                            setInterval(changeTaskCounts, 1000);
+                    
+                        });
                     </script>
                 </div>
-            {% endif %}
- 
-    {% endfor %}
-     
-{% endif %}
-</div>
+    
+            <!-- Eisenhower Matrix displaying all tasks for the current day (is displayed by default)-->
+
+            <div class="container mt-5">
+                <div class="row">
+                    <!-- Important and Urgent -->
+                    <div class="col-md-6 col-12 mb-3">
+                        <div class="card rounded-0 bg-highlight urgent-important" style="border-left: 5px solid rgb(230, 70, 70) !important; border: 1px solid rgb(204, 118, 118);">
+                            <div class="card-header bg-none">
+                                <h6>Do first</h6>
+                                <p>Important & urgent</p>
+                            </div>
+                            <div id='important and urgent' class="card-body overflow-auto" style="height: 400px;">
+                                <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                                    <input type="text" class="w-100 rounded-0 mb-5" name="title" placeholder="Add task...">
+                                    <input type="hidden" name="priority" value="important and urgent">
+                                    <button type="submit" class="d-none"></button>
+                                </form>
+                                {% for task in tasks %}
+                                    {% if task.priority == 'important and urgent' %}
+                                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:rgb(224, 130, 130) !important;">
+                                        <p class="p-0 m-0">
+                                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                                            <span class="task-title start-focus" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                                {% if task.completed %}<del class="opacity-50">{{ task.title }}</del>{% else %}{{ task.title }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex">
+                                            {% if task.completed %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="{% if task.completed %}true{% else %}false{% endif %}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% else %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0 " data-status="{% if task.completed %}true{% else %}false{% endif %}" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% endif %}
+                                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Important but not Urgent -->
+                    <div class="col-md-6 col-12 mb-3">
+                        <div class="card rounded-0 bg-highlight not-urgent-important" style="border-left: 5px solid rgb(165, 223, 99) !important; border: 1px solid rgb(148, 206, 137);">
+                            <div class="card-header">
+                                <h6>Schedule</h6>
+                                <p class="mb-0" style="font-size: x-small;">Less urgent, but important</p>
+                            </div>
+                            <div id='important but not urgent' class="card-body overflow-auto" style="height: 400px;">
+                                <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                                    <input type="text" class="rounded-0 mb-5 w-100" name="title" placeholder="Add task...">
+                                    <input type="hidden" name="priority" value="important but not urgent">
+                                    <button type="submit" class="d-none"></button>
+                                </form>
+                                {% for task in tasks %}
+                                    {% if task.priority == 'important but not urgent' %}
+                                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:rgb(148, 206, 137);">
+                                        <p class="p-0 m-0">
+                                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                                            <span class="task-title start-focus" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                                {% if task.completed %}<del class="opacity-50">{{ task.title }}</del>{% else %}{{ task.title }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex">
+                                            {% if task.completed %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="{% if task.completed %}true{% else %}false{% endif %}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% else %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0 " data-status="{% if task.completed %}true{% else %}false{% endif %}" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% endif %}
+                                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Not Important but Urgent -->
+                    <div class="col-md-6 col-12 mb-3">
+                        <div class="card rounded-0 bg-highlight urgent-not-important" style="border-left: 5px solid rgba(98, 201, 233, 0.808) !important; border: 1px solid rgb(148, 190, 207);">
+                            <div class="card-header">
+                                <h6>Delegate</h6>
+                                <p class="mb-0">Urgent, but less important</p>
+                            </div>
+                            <div id='not important but ugent' class="card-body overflow-auto" style="height: 400px;">
+                                <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                                    <input type="text" class="w-100 rounded-0 mb-5" name="title" placeholder="Add task...">
+                                    <input type="hidden" name="priority" value="not important but ugent">
+                                    <button type="submit" class="d-none"></button>
+                                </form>
+                                {% for task in tasks %}
+                                    {% if task.priority == 'not important but ugent' %}
+                                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:rgba(98, 201, 233, 0.808) !important;">
+                                        <p class="p-0 m-0">
+                                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                                            <span class="task-title start-focus" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                                {% if task.completed %}<del class="opacity-50">{{ task.title }}</del>{% else %}{{ task.title }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex">
+                                            {% if task.completed %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="{% if task.completed %}true{% else %}false{% endif %}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% else %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0 " data-status="{% if task.completed %}true{% else %}false{% endif %}" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% endif %}
+                                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+
+                    <!-- Not Important and Not Urgent -->
+                    <div class="col-md-6 col-12 mb-3">
+                        <div class="card rounded-0 bg-highlight not-urgent-not-important" style="border-left: 5px solid rgba(76, 79, 80, 0.808) !important; border: 1px solid rgb(47, 67, 75);">
+                            <div class="card-header">
+                                <h6>Don't do</h6>
+                                <p class="mb-0">Neither important nor urgent</p>
+                            </div>
+                            <div id='not important and not urgent' class="card-body overflow-auto" style="height: 400px;">
+                                <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                                    <input type="text" class="w-100 rounded-0 mb-5" name="title" placeholder="Add task...">
+                                    <input type="hidden" name="priority" value="not important and not urgent">
+                                    <button type="submit" class="d-none"></button>
+                                </form>
+                                {% for task in tasks %}
+                                    {% if task.priority == 'not important and not urgent' %}
+                                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:rgba(76, 79, 80, 0.808) !important;">
+                                        <p class="p-0 m-0">
+                                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                                            <span class="task-title" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                                {% if task.completed %}<del class="opacity-50">{{ task.title }}</del>{% else %}{{ task.title }}{% endif %}
+                                            </span>
+                                        </p>
+                                        <div class="d-flex">
+                                            {% if task.completed %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="{% if task.completed %}true{% else %}false{% endif %}">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu " type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% else %}
+                                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0 " data-status="{% if task.completed %}true{% else %}false{% endif %}" style="display: none;">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i>
+                                            </button>
+                                            <!-- Menu Dropdown -->
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="{% if task.completed %}true{% else %}false{% endif %}" href="#" style='cursor: pointer;'>Delete</a></li>
+                                            </ul>
+                                            {% endif %}
+                                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <div class="card-footer"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
 
 <!-- Modal Template -->
@@ -220,141 +332,22 @@
 <div class="modal-body" id="modal-body-content"></div>
 
 
-<!-- React -->
-
-<!-- Page displayed when there is no task for current user -->
-<script type="text/babel">
-    // Fonction pour afficher le modal
-    function displayModal(content, onCloseCallback) {
-        document.getElementById('modal-body-content').innerHTML = content;
-        const taskModal = new bootstrap.Modal(document.getElementById('taskModal'), { keyboard: false });
-        taskModal.show();
-
-        if (onCloseCallback) {
-            document.querySelector('#form').addEventListener('submit', event => {
-                event.preventDefault();
-                onCloseCallback();
-            });
-        }
-    }
-
-    // Fonction pour charger un nouveau formulaire de tâche
-    function loadNewTask() {
-        console.log('Loading new task...');
-        fetch('/tasks/new_task')
-            .then(response => response.text())
-            .then(data => {
-                displayModal(data);
-                const dateInput = document.querySelector('#due_date');
-                const calendarButton = document.querySelector('#calendar-button');
-                const form = document.getElementById('task-form');
-
-                flatpickr(dateInput, {
-                    dateFormat: "Y-m-d", // Format de la date
-                    minDate: "today",    // Dates à partir d'aujourd'hui
-                    altInput: true,      // Champ stylisé
-                    weekNumbers: true,
-                });
-                calendarButton.addEventListener('click', function () {
-                    dateInput._flatpickr.open();
-                });
-
-                // Soumettre le formulaire via AJAX
-                form.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    fetch(form.action, {
-                        method: 'POST',
-                        body: new FormData(form),
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        if (data.success) {
-                            // Gérer la tâche ajoutée ou mise à jour
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                    });
-                });
-
-                // Afficher une notification Toast après ajout
-                document.getElementById('showToastBtn').addEventListener('click', function () {
-                    const toastLiveExample = document.getElementById('liveToast');
-                    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
-                    toastBootstrap.show();  
-                });
-            })
-            .catch(error => console.error('Error fetching new task:', error));
-    }
-
-    // Composant React principal
-    function App() {
-        const containerStyle = {
-            marginTop: "50px",
-        };
-
-        return (
-            <div className="container" style={containerStyle}>
-                <div className="row">
-                    <div className="col-md-12 d-flex justify-content-center align-items-center">
-                        <div className="text-center p-5 w-75">
-                            {/* Titre principal avec une animation de clignotement */}
-                            <h1 className="blink mb-3 ">
-                                <i className="bi bi-emoji-frown me-2"></i>
-                            </h1>
-
-                            {/* Explication sur l'état de la page */}
-                            <p className="mb-3 fs-5">
-                                It looks like you haven't added any tasks  yet. This is your task management dashboard.
-                                Start by creating tasks to manage your projects more effectively.
-                            </p>
-
-                            {/* Suggestions pour ajouter des tâches ou des projets */}
-                            <p className="text-primary mb-4">
-                                Simply click the button below to add your first task or project. Tasks will help you keep track of 
-                                deadlines, progress, and priorities in your work or personal life.
-                            </p>
-
-                            {/* Explication sur l'utilité de l'ajout d'une tâche */}
-                            <p className="mb-4 fs-6 text-muted">
-                                Adding a task is easy! When you click on the "Add New Task" button, you will be able to define the 
-                                task's title, description, due date, and other important details.
-                            </p>
-
-                            {/* Bouton pour ajouter une nouvelle tâche */}
-                            <a 
-                                className="btn btn-lg btn-primary shadow-lg"  
-                                onClick={loadNewTask} 
-                                data-bs-toggle="tooltip" 
-                                data-bs-placement="top" 
-                                title="Click to add new task">
-                                <i className="bi bi-plus-circle"></i> Add New Task
-                            </a>
-
-                            {/* Explication sur les fonctionnalités futures */}
-                            <div className="mt-4">
-                                <p className="text-info fs-6">
-                                    As you start adding tasks, you'll see progress updates and statistics on the number of tasks 
-                                    completed versus pending. This will help you stay on track and organized.
-                                </p>
-
-                                <p className="text-danger fs-6">
-                                    Don’t forget to update the status of your tasks as you go! You can mark them as completed or 
-                                    leave them pending based on your progress.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-
-    }
-    
-    // Rendre l'application React dans l'élément
-    ReactDOM.render(<App />, document.querySelector("#app"));
-</script>
 
 
 {% endblock %}
+<!-- Task Due Date -->
+<label for="id_due_date" class="form-label fw-bold">📅 Due Date</label>
+<div class="input-group">
+    {{ form.due_date }}
+    <button type="button" onclick="
+        const today = today.toLocaleDateString('fr-FR', {
+                  month: 'long', 
+                  day: 'numeric', 
+                  year: 'numeric'
+              });;
+        document.querySelector('#due_date').value = today;
+    " class="btn btn-link text-decoration-none" id="today-btn">Today</button>
+    <span class="input-group-text" id="calendar-button" >
+        <i class="bi bi-calendar"></i>
+    </span>
+</div>

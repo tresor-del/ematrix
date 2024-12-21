@@ -23,9 +23,9 @@ document.addEventListener('DOMContentLoaded', function(){
             
                 // Contenu de la carte
                 userCard.innerHTML = `
-                    <div class="row g-0 align-items-center " id='invite-container-{{ user.id }}'>
+                    <div class="row g-0 align-items-center " id='invite-container-${user.id}'>
                         <div class="col-auto p-3">
-                            <img src={{ user.profile_image.url }} class='rounded-circle' >
+                            <img src="${user.profile_image}" class='rounded-circle' >
                         </div>
                         <div class="col">
                             <div class="card-body p-2">

@@ -1,86 +1,243 @@
 
 /* ----------- Global Styles ----------- */
 * {
-    font-family: 'Roboto', Arial, Helvetica, sans-serif;
+    font-family: 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif ;
 }
 
 /* ----------- Variables CSS ----------- */
 :root {
-    --background-color: #fff;
+    --background-color: #f1ecec;
     --text-color: rgb(26, 24, 24);
     --primary-color: #007bff;
     --header-background: #f8f9fa;
-    --important-urgent: #f3bdb9;
-    --not-urgent-important: #e9e296;
-    --urgent-not-important: #03a9f4;
-    --not-urgent-not-important: #ccdd6d;
     --border-color: rgb(90, 84, 84);
     --modal-header-color: rgb(116, 116, 240);
 }
+
+.bg-white { background-color: white; }
+.bg-lightgray { background-color: lightgray; }
+.bg-gray { background-color: gray; }
+.bg-greenyellow { background-color: greenyellow; }
 
 .sug-border{
     border-right: 1px solid var(--text-color) !important;
 }
 
-.dark-mode {
-    --header-background: #121212;
-    --background-color: #202123;
-    --text-color: #E0E0E0;
-    --important-urgent: #bd9c9a;
-    --not-urgent-important: #b1ad83;
-    --urgent-not-important: #4c768a;
-    --not-urgent-not-important: #969c70;
-    --border-color: grey;
+.color-option {
+    width: 40px;
+    height: 40px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s ease;
 }
+.color-option.selected {
+    border-color: #000; /* Highlight selected color */
+}
+
+#create-project {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+#create-project:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    transform: scale(1.1);
+}
+
+#create-project i {
+    color: #007bff; /* Couleur de l'icône */
+}
+
+#create-project:hover i {
+    color: #0056b3; /* Couleur de l'icône au survol */
+}
+
 
 /* ----------- Body & Typography ----------- */
 
-body {
-    background-color: var(--background-color);
-    color: var(--text-color);
-    transition: all 1s ease-in-out;
-}
+
 
 .brand {
-    color: var(--primary-color);
+    color: rgb(37, 33, 33);
+}
+
+.focus-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.timer-display {
+    font-size: 4rem;
+    color: #17a2b8; /* Couleur principale du timer */
+}
+
+.timer-container p {
+    font-style: italic;
+    margin-top: 0.5rem;
+    color: #adb5bd; /* Couleur secondaire */
+}
+
+.task-title h2 {
+    color: #ffc107; /* Couleur d'accent pour le titre */
+}
+
+.btn-lg {
+    font-size: 1.25rem;
+    padding: 0.75rem 2rem;
+}
+
+.dropdown-toggle::after {
+    display: none;
+}
+
+.b {
+    width: 100%;
+    max-width: 500px;
+    height: auto;
 }
 
 
-/* ----------- Modal Styles ----------- */
-
-.modal-content.custom-bg{
-    background-color: var(--background-color) !important;
+.task-form input:focus, #search-task{
+    outline: none; 
+}
+.task-form input, #search-task{
+    border: none;
+    border-bottom: 1px solid black; 
 }
 
-.modal-content input, .modal-content textarea, .modal-content select{
-    color: var(--text-color) !important;
-    background-color: var(--background-color) !important;
-
-}
-.modal-content input::placeholder, .modal-content textarea::placeholder, .modal-content select::placeholder{
-    color: var(--text-color);
-    opacity: 0.5;
+#move:hover{
+    cursor:move;
 }
 
-
-/* ----------- Card Styles ----------- */
-.card {
-    background-color: var(--background-color);
-    border-color: var(--border-color) !important;
+.card .card-header h6{
+    font-weight: bold; 
+    font-size: 30px;
+}
+.card .card-header p{
+    margin-bottom: 0;
+    font-size: x-small;
 }
 
-.card .card-body .card-title {
-    color: var(--border-color) !important;
+/* General container styling */
+.container {
+    max-width: 800px;
+    margin: auto;
 }
 
-.card .card-body input {
-    background-color: var(--background-color);
-    color: var(--text-color);
+/* Search section styling */
+.search-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.card .card-body input::placeholder {
-    color: var(--text-color);
-    opacity: 0.5;
+/* Input group styling */
+.input-group {
+    display: flex;
+    align-items: center;
+}
+
+.input-group .form-control {
+    border-radius: 50px;
+    padding: 10px 20px;
+}
+
+.input-group .btn {
+    border-radius: 50px;
+    padding: 10px 20px;
+}
+
+/* Loading spinner styling */
+#loading {
+    margin-top: 20px;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+}
+
+/* Results container styling */
+.results-container {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* No results message styling */
+#no-results {
+    color: #6c757d;
+}
+
+/* User result styling */
+.user-result {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.user-result:last-child {
+    border-bottom: none;
+}
+
+.user-result img {
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.user-result h6 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.user-result small {
+    color: #6c757d;
+}
+
+/* Styles pour les cartes de la matrice Eisenhower */
+.eisenhower-matrix .card {
+    margin-bottom: 1rem;
+}
+
+.custom-popup {
+    background-color: #fefae0;
+    border: 1px solid #d4a373;
+}
+
+.custom-title {
+    color: #6b705c;
+}
+
+.custom-button {
+    background-color: #ffb703 !important;
+    color: #023047 !important;
+}
+
+
+/* Styles pour les écrans larges */
+@media (min-width: 768px) {
+    .eisenhower-matrix .col-md-6 {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+/* Styles pour les écrans petits */
+@media (max-width: 767.98px) {
+    .eisenhower-matrix .col-12 {
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 
