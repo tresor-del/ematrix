@@ -8,83 +8,54 @@ This is a task management web application based on the Eisenhower matrix, design
 
 ## Distinctiveness and Complexity
 
-### Distinctiveness
+This project clearly satisfies the distinctiveness requirement because it does not replicate simple, commonly found applications such as blogs or to-do lists. Instead, it introduces a unique and practical approach to task management by leveraging the Eisenhower Matrix, a renowned time management tool. This matrix allows users to prioritize their tasks based on urgency and importance, offering a clearer and more strategic method of handling daily responsibilities.
 
-This project satisfies the distinctiveness requirement because it is not a simple clone of common projects like a blog or a to-do list. Instead, it introduces a unique feature set, such as:
+Beyond task prioritization, the app incorporates several advanced features that set it apart. It integrates visual feedback systems to help users track their productivity and time management trends over time. This feature encourages more informed decision-making by providing an overview of past activity, which can motivate users to refine their habits.
 
-- **Integration of the Eisenhower Matrix:** A decision-making framework for prioritizing tasks based on urgency and importance.
-- **User-specific analytics:** Visual feedback on productivity and time management trends.
+The app also uses the `allauth` library for seamless user authentication and social login via Google, ensuring that users have a smooth onboarding experience. The Google Cloud API further enhances this by simplifying the authentication process and providing secure, reliable management of user data.
 
-### Complexity
+In terms of interactivity, the app leverages JavaScript to enable real-time updates, drag-and-drop functionality for task management, and AJAX requests to keep the user experience fluid and responsive without unnecessary page reloads. These dynamic interactions add to the app’s sophistication and make it stand out from simpler, static applications.
 
-This project meets the complexity requirement due to:
+Moreover, the app incorporates tools and APIs for rich data visualization. Chart.js is used to graphically display productivity statistics, providing users with an immediate understanding of their performance trends. Users can also export their tasks to CSV or PDF formats, offering flexibility for offline use and external data management.
 
-1. **Advanced Backend Logic**: Includes custom models and queries to handle relationships between users, tasks, notifications, and projects.
-2. **Dynamic Frontend**: Utilizes JavaScript for real-time updates, drag-and-drop functionality, and AJAX requests.
-3. **Third-party Integrations**: Incorporates additional tools and APIs, such as charts for data visualization or authentication using social login.
+Overall, this project stands out not just because it is different, but because it successfully combines multiple advanced features—task prioritization, real-time interaction, data visualization, and easy data export—into a single, cohesive application. The integration of these elements, each requiring a thoughtful approach to both development and user experience, significantly raises the complexity and impact of the project.
 
----
 
 ## File Structure
 
-### Main Files and Their Purposes
+**main.css** : This CSS file defines global styles for the application, including CSS variables, responsive design rules, and animations to enhance the user experience across different screen sizes.
 
-#### `models.py`
+**profile.css** : This CSS file is dedicated to styling the profile page, handling elements like layout, images, buttons, and responsiveness to ensure the profile page adapts properly on different devices.
 
-Defines the database schema, including:
+**chart.js** : This JavaScript file is responsible for fetching task data from the server and dynamically rendering it into a doughnut chart. It helps visualize task distribution based on their priority and progress.
 
-- **CustomUser**: Extends Django's User model to support additional user fields.
-- **Task**: Represents tasks with fields for urgency, importance, deadlines, etc.
+**events.js** : This JavaScript file handles the main task management functionalities, including drag-and-drop for task reordering, focus mode for single-task emphasis, and integration with the chart for displaying task statistics in real-time.
 
-#### `views.py`
+**profile.js** : This JavaScript file fetches and displays the user’s profile data in a dynamic modal, allowing users to view and update their profile information without reloading the page.
 
-Contains the core application logic, such as:
+**layout.html** : This HTML file serves as the layout template for the application, containing links to JavaScript files, CSS files, and other libraries. It also provides the navigation links and a base structure for all other HTML pages in the app.
 
-- Handling CRUD (Create, Read, Update, Delete) operations for tasks .
-- Sending JSON responses for AJAX requests.
-- Managing user authentication and authorization.
-- Rendering templates with context data.
+**chart.html** : This file contains a Bootstrap modal used for displaying the dynamic doughnut chart, providing a visual representation of task data to the user in an interactive format.
 
-#### `urls.py`
+**edit_profile.html** : This file contains a Bootstrap modal that allows users to update their personal information, such as their username, email, and profile picture.
 
-Maps URLs to their corresponding views, defining the routing of the application.
+**focus_mode.html** : This file contains a Bootstrap modal designed to help users focus on a single task by temporarily hiding all other tasks, promoting productivity and minimizing distractions.
 
-#### `templates/`
+**index.html** : This file is the landing page for new users. It provides an overview of the app, highlighting its features, explaining why the user should use it, and includes a call-to-action to encourage sign-in or sign-up.
 
-Holds HTML templates for the app’s frontend. Includes templates for:
+**privacy.html** : This page outlines the app's privacy policies, explaining how user data is handled, stored, and protected in compliance with legal standards.
 
-- Task creation and management.
-- Eisenhower matrix visualization.
-- User dashboards.
-- User authentication (login, registration, etc.).
+**terms.html** : This file contains the app’s terms and conditions, providing users with an understanding of the rules, responsibilities, and limitations when using the application.
 
-#### `static/`
+**profile.html** : This page displays the user's personal information in an off-canvas sidebar, offering a quick view of their profile data for easy access and editing.
 
-Contains CSS, JavaScript, and image assets used for styling and interactivity. This includes:
+**tasks.html** : This is the main part of the application, where the Eisenhower Matrix quadrants are displayed. It allows users to manage and organize their tasks based on urgency and importance, helping them focus on what matters most
 
-- Custom stylesheets for the application.
-- JavaScript files for dynamic behaviors and AJAX requests.
-- Images and icons used in the UI.
+**login.html**: This file provides the login interface for users. It includes a form with fields for email and password, and a button for signing in via Google OAuth. It should redirect users to the authentication service for Google login.
 
-#### `requirements.txt`
-
-Lists Python dependencies required to run the project. This ensures that all necessary packages are installed in the virtual environment.
-
-#### `README.md`
-
-Documentation about the project (this file). It provides an overview, distinctiveness and complexity details, file structure, setup instructions, and additional information.
-
----
+**signup.html**: This file contains the signup form, where users can create an account by entering their email and password or signing up via Google OAuth.
 
 ## How to Run the Application
-
-### Prerequisites
-
-Ensure you have the following installed:
-
-- Python 3.9+
-- pip (Python package manager)
-- A virtual environment manager (optional but recommended)
 
 ### Steps
 
@@ -121,19 +92,9 @@ Ensure you have the following installed:
 
 ## Additional Information
 
-### Custom Features
-
-- **Drag-and-Drop Task Management**: Users can drag tasks between quadrants of the Eisenhower matrix.
-- **Dark mode**: Users can toggle between light and dark modes using a button in the UI.
-
-### Third-Party Libraries
-
-- **Chart.js**: Used to create data visualizations and analytics.
-
 ### Testing
 
-To run the test suite, use:
-
+To run the tests:
 ```bash
 python manage.py test
 ```

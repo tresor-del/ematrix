@@ -1,5 +1,5 @@
 import json
-from django.core.paginator import Paginator
+import csv
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, JsonResponse
@@ -7,18 +7,79 @@ from django.shortcuts import get_list_or_404, redirect, render, get_object_or_40
 from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from collections import defaultdict
-from datetime import date,datetime
-from django.db.models import ExpressionWrapper, F,  IntegerField
+from datetime import datetime
 from django.contrib import messages
-from django.db.models import Q
 
 from .forms import TaskForm
 from .models import CustomUser, Task
 
 
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
+from reportlab.lib import colors
+from django.http import HttpResponse
 
-## Task view
+def export_to_pdf(request):
+
+    # Créer une réponse HTTP avec un type de contenu PDF
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="tasks.pdf"'
+
+    # Créer un objet canvas pour le PDF
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+
+    # Exemple de contenu
+    tasks = Task.objects.filter(author=request.user)
+
+    # Ajouter du texte au PDF avec des couleurs
+    y = height - 50  # Position verticale
+    p.setFont("Helvetica-Bold", 16)
+    p.setFillColor(colors.darkblue)
+    p.drawString(100, y, f"Task Lists for {request.user}:")
+    y -= 30
+
+    p.setFont("Helvetica", 12)
+    for task in tasks:
+        p.setFillColor(colors.black)
+        p.drawString(100, y, "Title:")
+        p.setFillColor(colors.green)
+        p.drawString(150, y, task.title)
+        y -= 20
+
+        p.setFillColor(colors.black)
+        p.drawString(100, y, "Priority:")
+        p.setFillColor(colors.red)
+        p.drawString(150, y, task.priority)
+        y -= 20
+
+        p.setFillColor(colors.black)
+        p.drawString(100, y, "Creation Date:")
+        p.setFillColor(colors.blue)
+        p.drawString(200, y, task.created_at.strftime('%Y-%m-%d'))
+        y -= 40
+
+    # Sauvegarder et fermer le PDF
+    p.showPage()
+    p.save()
+
+    return response
+
+
+def export_tasks_csv(request):
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="tasks.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Title', 'Priorité', 'Creation date'])  # Header
+    tasks = Task.objects.filter(author=request.user)
+
+    for task in tasks:
+        writer.writerow([task.title, task.priority, task.created_at])
+
+    return response
+
 
 def index(request):
     if request.user.is_authenticated:
@@ -35,7 +96,7 @@ def login_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse('task:tasks'))
         else:
-            return render(request, 'task/login.html', {
+            return render(request, 'account/login.html', {
                 'message': 'Wrong Username and/or Passwort.'
             })
     return render(request, 'task/login.html')
@@ -49,7 +110,7 @@ def register_view(request):
         profile_image = request.FILES.get('profile_image')  
 
         if password != confirmation:
-            return render(request, 'task/register.html', {
+            return render(request, 'account/register.html', {
                 'message': "Passwords do not match!"
             })
         
@@ -61,11 +122,11 @@ def register_view(request):
             login(request, user)
             return HttpResponseRedirect(reverse('task:tasks'))
         except Exception as e:
-            return render(request, 'task/register.html', {
+            return render(request, 'account/signup.html', {
                 'message': str(e)
             })
     
-    return render(request, 'task/register.html')
+    return render(request, 'task/signup.html')
 
 
 
@@ -240,7 +301,6 @@ def focus_mode(request, task_id):
     return JsonResponse(response_data)
 
 def chart(request):
-
     today = datetime.today().date()
     tasks = Task.objects.filter(author=request.user, due_date=today)
     tasks_count = tasks.count()
@@ -250,4 +310,10 @@ def chart(request):
         'completed_task_count' : completed_task_count,
         'pending_task_count' : pending_task_count
     })
+
+def privacy_policy(request):
+    return render(request, 'task/privacy.html')
+
+def terms_and_conditions(request):
+    return render(request, 'task/terms.html')
     

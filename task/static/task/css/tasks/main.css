@@ -11,7 +11,7 @@
     --header-background: #f8f9fa;
     --border-color: rgb(90, 84, 84);
     --modal-header-color: rgb(116, 116, 240);
-    --secondary-color: #adb5bd;
+    --secondary-color: #1768b9;
     --accent-color: #ffc107;
     --timer-color: #17a2b8;
     --custom-file-btn-hover: #0056b3;
@@ -116,8 +116,14 @@ body {
     background-color: var(--header-background) !important;
 }
 
-.navbar li a, #dark-mode-toggle{
+.navbar li a, #dark-mode-toggle {
     color: var(--text-color);
+    text-decoration: none;  /* Optionnel : évite le soulignement */
+}
+
+.navbar .navbar-nav li a:hover {
+    background-color: var(--secondary-color) !important;
+    color: var(--hover-text-color);  /* Si vous voulez aussi changer la couleur du texte */
 }
 
 
@@ -226,4 +232,123 @@ body {
 /* Hide File Input Styles */
 .hide-img input[type="file"] {
     display: none;
+}
+
+/* Custom styles for feature icons, titles, descriptions, and call-to-action buttons */
+.feature-icon {
+    font-size: 3rem;
+    color: #28a745;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.feature-description {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.cta-button {
+    border: 1px solid #28a745;
+    color: #28a745;
+    padding: 10px 20px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.cta-button:hover {
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+}
+h1 {
+    font-size: 100px;
+}
+
+  /* Keyframe animations for different effects */
+  @keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Styles for elements that animate on scroll */
+.animate-on-scroll {
+    opacity: 0;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+.animate-on-scroll.slideInLeft {
+    transform: translateX(-100%);
+}
+
+.animate-on-scroll.slideInUp {
+    transform: translateY(100%);
+}
+
+.animate-on-scroll.slideInRight {
+    transform: translateX(100%);
+}
+
+.animate-on-scroll.fadeIn {
+    opacity: 0;
+}
+
+.animate-on-scroll.fadeInUp {
+    transform: translateY(20px);
+}
+
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
 }

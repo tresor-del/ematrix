@@ -1,6 +1,6 @@
 <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
     <!-- Modal Dialog -->
-    <div class="modal-dialog modal-dialog-centered modal-fullscreen" style="width: 100%;">
+    <div class="modal-dialog modal-dialog-centered " >
         <div class="modal-content shadow-lg mode modal-bg">
             <!-- Modal Header -->
             <div class="modal-header border-0">
@@ -10,6 +10,11 @@
 
             <!-- Modal Body -->
             <div class="modal-body text-center">
+                {% if completed_task_count == 0 and pending_task_count == 0 %}
+                    <div class="alert alert-warning" role="alert">
+                        You have not completed any tasks today. Add some tasks to see the chart.
+                    </div>
+                {% else %}
                 <div class="text-center">
                     <small>Completed Tasks: <span id="c" data-count="{{ completed_task_count }}">{{ completed_task_count }}</span></small> <span class="opacity-25">|</span> 
                     <small>Pending Tasks: <span id="p" data-count="{{ pending_task_count }}">{{ pending_task_count }}</span></small>
@@ -31,6 +36,7 @@
                     <div class="alert alert-danger" role="alert">
                         You have completed less number of tasks than pending tasks.Can do better!
                     </div>
+                {% endif %}
                 {% endif %}
             </div>
         </div>
