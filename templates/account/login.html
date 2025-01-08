@@ -1,18 +1,22 @@
 {% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - eMatrix</title>
+    <title id="title">Sign In - eMatrix</title>
+    
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'task/css/tasks/style.css' %}">
     <script src="{% static 'task/javascript/tasks/dark_or_light.js' %}"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
 </head>
 <body>
-    <div class="container d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
         <div class="card p-4" style="max-width: 400px; width: 100%;">
             <div class="card-body">
                 <h1 class="text-center mb-4">eMatrix</h1>
@@ -25,15 +29,38 @@
                         </div>
                     {% endif %}
                     <div class="mb-3">
-                        <label for="login-username" class="form-label">Username</label>
                         <input placeholder="Username" type="text" name="username" class="form-control" id="login-username" autofocus required>
                     </div>
                     <div class="mb-3">
-                        <label for="login-password" class="form-label">Password</label>
                         <input placeholder="Password" type="password" name="password" class="form-control" id="login-password" required>
                     </div>
                     <button type="submit" class="btn btn-primary w-100" id="submit-button" disabled>Sign In</button>
+                    <script>
+                        document.getElementById('login-form').addEventListener('submit', function() {
+                            document.getElementById('submit-button').innerText = 'Signing In...';
+                            document.getElementById('submit-button').disabled = true;
+                            document.getElementById('title').innerText = 'Signing In...';
+                        });
+                    </script>
                 </form>
+
+                <div class="text-center mt-3">
+                    <p>Or</p>
+                    <a id="google" href="{% provider_login_url 'google' %}" class="btn btn-outline-danger w-100 mb-2">
+                        <i class="bi bi-google"></i> <span id="text">sign in with Google</span>
+                    </a>
+                </div>
+                <script>
+                    document.getElementById('google').addEventListener('click', function() {
+                        document.getElementById('text').innerText = 'Signing In...';
+                        document.getElementById('text').disabled = true;
+                        document.getElementById('title').innerText = 'Signing In...';
+                    });
+                </script>
+
+                <div class="text-center mt-3">
+                    <p>Don't have an account? <a href="{% url 'account_signup' %}?provider=google" >Sign Up</a></p>
+                </div>
                 <script>
                     const usernameInput = document.getElementById('login-username');
                     const passwordInput = document.getElementById('login-password');
@@ -53,6 +80,15 @@
             </div>
         </div>
     </div>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 mt-auto">
+        <p>&copy; 2024 eMatrix | All rights reserved</p>
+        <p>
+            <a href="{% url 'task:privacy' %}" class="text-decoration-none">Privacy Policy</a> | 
+            <a href="{% url 'task:terms' %}" class="text-decoration-none">Terms of Service</a>
+        </p>
+    </footer>
     
     <!-- Bootstrap JS and Popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
