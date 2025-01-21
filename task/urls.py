@@ -4,9 +4,6 @@ from . import views
 
 app_name = 'task'
 urlpatterns = [
-
-    ## task
-
     # Home page
     path('', views.index, name='index'),
     
