@@ -21,19 +21,27 @@ from django.http import HttpResponse
 
 def export_to_pdf(request):
 
-    # Créer une réponse HTTP avec un type de contenu PDF
+    # Créer une réponse HTTP avec un type de contenu PDF 
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="tasks.pdf"'
+
+    # appeler le fichier 'tasks.pdf' et permettre son télechargement
+    response['Content-Disposition'] = 'atachment; filename="tasks.pdf"'
 
     # Créer un objet canvas pour le PDF
     p = canvas.Canvas(response, pagesize=letter)
     width, height = letter
 
-    # Exemple de contenu
+    # récupération des taches de l'utilisateur
     tasks = Task.objects.filter(author=request.user)
 
+    #Mettre le nom du site 
+    p.setFont('Helvetica', 8)
+    p.setFillColor(colors.black)
+    p.drawString(20, height - 20, "eMatrix")
+
     # Ajouter du texte au PDF avec des couleurs
-    y = height - 50  # Position verticale
+    y = height - 40  # Position verticale
+    x = width - 50
     p.setFont("Helvetica-Bold", 16)
     p.setFillColor(colors.darkblue)
     p.drawString(100, y, f"Task Lists for {request.user}:")
