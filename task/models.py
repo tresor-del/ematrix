@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 class CustomUser(AbstractUser):
-    profile_image = models.ImageField( upload_to='images/', null=True, blank=True)
+    profile_image = models.ImageField( upload_to='images/', default='images/profile_image.png', null=True, blank=True)
 
     groups = models.ManyToManyField(
         'auth.Group',

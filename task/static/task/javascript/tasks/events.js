@@ -291,9 +291,13 @@ document.addEventListener('DOMContentLoaded', function () {
                         console.log(element.dataset.status)
 
                         if (element.dataset.status === 'false' ){
-                            updateCount('#p', -1)
+                            if(updateCount('#p') >= 0){
+                                updateCount('#p', -1)
+                            }
                         } else {
-                            updateCount('#c', -1)
+                            if(updateCount('#c') >= 0){
+                                updateCount('#c', -1)
+                            }
                         }
                     } else {
                         alert('Failed to delete the task.');
