@@ -1,0 +1,34 @@
+<footer class="text-center text-lg-start mt-auto border-top">
+    <div class="container footer-container p-4">
+        <div class="row">
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <h5 >eMatrix</h5>
+                <p>
+                    Your go-to task management solution.
+                </p>
+                    <a href="{% url 'task:privacy' %}" class="text-decoration-none me-3">Privacy Policy</a> <br>
+                    <a href="{% url 'task:terms' %}" class="text-decoration-none">Terms of Service</a>
+                
+            </div>
+            <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                <h5 class="text-uppercase">Contact</h5>
+                <p>
+                   Email:  <a target="_blank" href="mailto:mailto:tresoradzanto7@gmail.com">tresoradzanto7@gmail.com</a>
+                
+                </p>
+                <P>
+                    Made with peace and love by <a target="_blank" href="https://tresor-del.github.io">Trésor</a>
+                </P>
+            </div>
+        </div>
+        <div class="row mt-3">
+            
+        </div>
+    </div>
+    <div class="text-center p-3 bg-dark text-white">
+       <p>&copy;<span id="current-year"></span> eMatrix. All rights reserved.</p>
+    </div>
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear()
+    </script>
+</footer>

@@ -18,209 +18,44 @@
 </head>
 <body>
 
+    <!-- Floating Button -->
+     <button  id="fab" class="btn btn-primary" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;">
+            <span class="tooltiptext"><a href="{% url 'account_login' %}?provider=google" style="color: currentColor; text-decoration: none;">Get Started </a></span> 
+        
+     </button>
+
+     <script>
+        const fab = document.getElementById('fab');
+        const getStarted = document.getElementById('start');
+
+        // Scroll to 'get started' section when the button is clicked 
+        fab.addEventListener('click', () => {
+            getStarted.scrollIntoView({behavior: 'smooth'});
+        })
+
+        // Hide the button when the section is visible
+        window.addEventListener('scroll', () => {
+            const rect  = getStarted.getBoundingClientRect();
+            const isVisible = rect.top <= window.innerHeight && rect.bottom >= 0;
+
+            if (isVisible) {
+                fab.style.display = 'none';
+            } else {
+                fab.style.display = 'block'
+            }
+        })
+     </script>
+
     <!-- Hero Section -->
-    <div class="container-fluid bg-success text-white text-center d-flex align-items-center justify-content-center" style="height: 100vh;">
+    <div class="container-fluid  text-white text-center d-flex align-items-center justify-content-center" style="height: 100vh;">
         <div class="container">
             <h1 class="starting-text"><span class="logo">eMatrix</span>, Organize your tasks using the Eisenhower Matrix and boost your productivity.</h1>
-            <blockquote class="blockquote mt-4">
+            <blockquote class="blockquote text-muted mt-4">
             <p>"What is important is seldom urgent and what is urgent is seldom important." </p>
             <footer id="quote-footer" class="blockquote-footer text-muted m-1">Dwight D. Eisenhower</footer>
             </blockquote>
         </div>
     </div>
-<!-- 
-    <script>
-        // Function to animate text
-        function animateText(element, text) {
-          let to = text.length,
-            from = 0;
-    
-          animate({
-            duration: 3000,
-            timing: linear,
-            draw: function(progress) {
-              let result = (to - from) * progress + from;
-              element.innerHTML = text.slice(0, Math.ceil(result));
-            }
-          });
-        }
-    
-        // Linear timing function for animation
-        function linear(timeFraction) {
-          return timeFraction;
-        }
-
-        // Function to handle the animation
-        function animate({timing, draw, duration}) {
-          let start = performance.now();
-        
-          requestAnimationFrame(function animate(time) {
-            let timeFraction = (time - start) / duration;
-            if (timeFraction > 1) timeFraction = 1;
-        
-            let progress = timing(timeFraction);
-        
-            draw(progress);
-        
-            if (timeFraction < 1) {
-              requestAnimationFrame(animate);
-            }
-          });
-        }
-
-        // Event listener to start text animations when the DOM is fully loaded
-        document.addEventListener("DOMContentLoaded", function() {
-          let welcomeText = document.getElementById("welcome-text");
-          let descriptionText = document.getElementById("description-text");
-          let quoteText = document.getElementById("quote-text");
-          let quoteFooter = document.getElementById("quote-footer");
-
-          animateText(welcomeText, "Welcome to eMatrix");
-          animateText(descriptionText, "Organize your tasks using the Eisenhower Matrix and boost your productivity.");
-          animateText(quoteText, "\"What is important is seldom urgent and what is urgent is seldom important.\"");
-          animateText(quoteFooter, "Dwight D. Eisenhower");
-        });
-    </script> -->
-    
-
-    <!-- Features Section -->
-    <div class="container py-5">
-        <h2 class="text-center mb-4">Features</h2>
-        <div class="row text-center">
-            <!-- Feature 1 -->
-            <div class="col-md-4 mb-4 animate-on-scroll slideInLeft">
-                <div class="feature-icon">
-                    <i class="bi bi-check-circle"></i>
-                </div>
-                <div class="feature-title">Prioritize Tasks</div>
-                <p class="feature-description">Use the Eisenhower Matrix to prioritize tasks effectively based on urgency and importance.</p>
-            </div>
-            <!-- Feature 2 -->
-            <div class="col-md-4 mb-4 animate-on-scroll slideInUp">
-                <div class="feature-icon">
-                    <i class="bi bi-calendar-week"></i>
-                </div>
-                <div class="feature-title">Plan Your Day</div>
-                <p class="feature-description">Create a daily schedule that helps you focus on what truly matters.</p>
-            </div>
-            <!-- Feature 3 -->
-            <div class="col-md-4 mb-4 animate-on-scroll slideInRight">
-                <div class="feature-icon">
-                    <i class="bi bi-graph-up"></i>
-                </div>
-                <div class="feature-title">Track Your Progress</div>
-                <p class="feature-description">Monitor your progress and track completed tasks to stay motivated.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detailed Features Section -->
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-lg-3 col-md-6 mb-4 animate-on-scroll slideInLeft">
-                <div class="feature-icon">
-                    <i class="bi bi-check-circle"></i>
-                </div>
-                <h3 class="feature-title">Do First</h3>
-                <p class="feature-description">Tasks that are important and urgent. Complete these tasks as soon as possible.</p>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4 animate-on-scroll slideInUp">
-                <div class="feature-icon">
-                    <i class="bi bi-clock"></i>
-                </div>
-                <h3 class="feature-title">Schedule</h3>
-                <p class="feature-description">Tasks that are important but not urgent. Schedule these tasks for later.</p>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4 animate-on-scroll slideInUp">
-                <div class="feature-icon">
-                    <i class="bi bi-person"></i>
-                </div>
-                <h3 class="feature-title">Delegate</h3>
-                <p class="feature-description">Tasks that are urgent but not important. Delegate these tasks to others.</p>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-4 animate-on-scroll slideInRight">
-                <div class="feature-icon">
-                    <i class="bi bi-trash"></i>
-                </div>
-                <h3 class="feature-title">Eliminate</h3>
-                <p class="feature-description">Tasks that are neither important nor urgent. Eliminate these tasks.</p>
-            </div>
-        </div>
-    </div>
-    <hr id="about">
-
-    <!-- About Section -->
-    <div class="container py-5 mt-2">
-        <h2 class="text-center mb-4 animate-on-scroll fadeIn" style="font-family: 'Roboto', sans-serif;">About eMatrix</h2>
-        <p class="lead text-center animate-on-scroll fadeIn" style="font-family: 'Roboto', sans-serif;">eMatrix helps you stay on top of your tasks and manage your time effectively by using a simple but powerful technique: the Eisenhower Matrix. It helps you decide which tasks are urgent and important, and how to prioritize your time effectively.</p>
-        <p class="text-center animate-on-scroll fadeIn" style="font-family: 'Roboto', sans-serif;">Whether you're working on a big project or managing daily tasks, Task Manager is here to help you achieve your goals with clarity and focus.</p>
-
-        <div class="m-5">
-            <h4 class="text-center m-5">Why Use eMatrix?</h4>
-            <div class="row">
-                <div class="col-md-6 animate-on-scroll slideInLeft">
-                    <div class="feature-icon">
-                        <i class="bi bi-clock-history"></i>
-                    </div>
-                    <h5 class="feature-title">Better Time Management</h5>
-                    <p class="feature-description">With our powerful matrix, you can spend more time focusing on high-priority tasks and reduce time spent on distractions. Use it for both personal and professional tasks.</p>
-                    <blockquote class="blockquote">
-                        <p class="mb-0">"Time management is the key to a balanced life."</p>
-                        <footer class="blockquote-footer m-1">Anonymous</footer>
-                    </blockquote>
-                </div>
-                <div class="col-md-6 animate-on-scroll slideInRight">
-                    <div class="feature-icon">
-                        <i class="bi bi-lightning-charge"></i>
-                    </div>
-                    <h5 class="feature-title">Boost Your Productivity</h5>
-                    <p class="feature-description">By organizing your day and knowing exactly what to focus on, you'll complete tasks faster, allowing for more free time to do what you love.</p>
-                    <blockquote class="blockquote">
-                        <p class="mb-0">"Productivity is never an accident. It is always the result of a commitment to excellence, intelligent planning, and focused effort."</p>
-                        <footer class="blockquote-footer m-1">Paul J. Meyer</footer>
-                    </blockquote>
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr>
-
-    <!-- Call to Action Section -->
-    <div class="container text-center py-5" id="start">
-        <h2 class="display-4 mb-4" style="font-family: 'Roboto', sans-serif; animation: fadeIn 2s;">Get Started Today!</h2>
-        <p class="lead mb-3" style="font-family: 'Roboto', sans-serif; animation: fadeIn 2s;">It's time to take control of your day and get organized.</p>
-        <a href="{% url 'account_login' %}?provider=google" class="btn btn-primary mx-2" style="animation: fadeInUp 2s;">Sign In</a>
-        <a href="{% url 'account_signup' %}?provider=google" class="btn btn-secondary mx-2" style="animation: fadeInUp 2s;">Register</a>
-    </div>
-
-    <script>
-        // Intersection Observer to add 'visible' class when elements are in view
-        document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('.animate-on-scroll');
-            const observer = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                } else {
-                entry.target.classList.remove('visible');
-                }
-            });
-            }, { threshold: 0.1 });
-
-            elements.forEach(element => {
-            observer.observe(element);
-            });
-        });
-    </script>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-4">
-        <p>&copy; 2024 eMatrix | All rights reserved</p>
-        <p>
-            <a href="{% url 'task:privacy' %}" class="text-white">Privacy Policy</a> | 
-            <a href="{% url 'task:terms' %}" class="text-white">Terms of Service</a>
-        </p>
-    </footer>
 
     <!-- Bootstrap JS and Popper -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>

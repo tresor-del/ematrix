@@ -1,0 +1,15 @@
+#environements virtuels
+venv/
+env/
+env2/
+
+
+# Autres fichiers temporaires
+*.log
+*.sqlite3
+.DS_Store
+packages.microsoft.gpg
+
+# Fichiers Python compilés
+__pycache__/
+*.py[cod]
