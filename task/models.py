@@ -41,7 +41,7 @@ class Priority(models.TextChoices):
         
         IU = 'important and urgent' ,'Important and Urgent'
         InU = 'important but not urgent', 'Important but not Urgent'
-        nIU = 'not important but ugent', 'Not important but Urgent'
+        nIU = 'not important but urgent', 'Not important but Urgent'
         nInU = 'not important and not urgent', 'Not important and not Urgent'
 
 

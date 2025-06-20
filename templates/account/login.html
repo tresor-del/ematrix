@@ -6,7 +6,7 @@
 {% block content %}
 <h5 class="card-title text-center mb-4">Sign In</h5>
 
-<form id="login-form" method="post" action="{% url 'task:login' %}">
+<form id="login-form" method="post" action="{% url 'task:login' %}" enctype="multipart/form-data">
     {% csrf_token %}
     {% if message %}
         <div id="alert-message" class="alert alert-danger" role="alert"> 
@@ -14,7 +14,7 @@
         </div>
     {% endif %}
     <div class="mb-3">
-        <input placeholder="Username" type="text" name="username" class="form-control" id="login-username" autofocus required>
+        <input placeholder="Email" type="text" name="email" class="form-control w-100" id="login-username" autofocus required>
     </div>
     <div class="mb-3">
         <input placeholder="Password" type="password" name="password" class="form-control" id="login-password" required>

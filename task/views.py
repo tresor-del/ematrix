@@ -19,76 +19,6 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib import colors
 from django.http import HttpResponse
 
-def export_to_pdf(request):
-
-    # Créer une réponse HTTP avec un type de contenu PDF 
-    response = HttpResponse(content_type='application/pdf')
-
-    # appeler le fichier 'tasks.pdf' et permettre son télechargement
-    response['Content-Disposition'] = 'atachment; filename="tasks.pdf"'
-
-    # Créer un objet canvas pour le PDF
-    p = canvas.Canvas(response, pagesize=letter)
-    width, height = letter
-
-    # récupération des taches de l'utilisateur
-    tasks = Task.objects.filter(author=request.user)
-
-    #Mettre le nom du site 
-    p.setFont('Helvetica', 8)
-    p.setFillColor(colors.black)
-    p.drawString(20, height - 20, "eMatrix")
-
-    # Ajouter du texte au PDF avec des couleurs
-    y = height - 40  # Position verticale
-    x = width - 50
-    p.setFont("Helvetica-Bold", 16)
-    p.setFillColor(colors.darkblue)
-    p.drawString(100, y, f"Task Lists for {request.user}:")
-    y -= 30
-
-    p.setFont("Helvetica", 12)
-    for task in tasks:
-        p.setFillColor(colors.black)
-        p.drawString(100, y, "Title:")
-        p.setFillColor(colors.green)
-        p.drawString(150, y, task.title)
-        y -= 20
-
-        p.setFillColor(colors.black)
-        p.drawString(100, y, "Priority:")
-        p.setFillColor(colors.red)
-        p.drawString(150, y, task.priority)
-        y -= 20
-
-        p.setFillColor(colors.black)
-        p.drawString(100, y, "Creation Date:")
-        p.setFillColor(colors.blue)
-        p.drawString(200, y, task.created_at.strftime('%Y-%m-%d'))
-        y -= 40
-
-    # Sauvegarder et fermer le PDF
-    p.showPage()
-    p.save()
-
-    return response
-
-
-def export_tasks_csv(request):
-
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="tasks.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Title', 'Priorité', 'Creation date'])  # Header
-    tasks = Task.objects.filter(author=request.user)
-
-    for task in tasks:
-        writer.writerow([task.title, task.priority, task.created_at])
-
-    return response
-
-
 def index(request):
     if request.user.is_authenticated:
         return redirect('task:tasks')
@@ -96,16 +26,16 @@ def index(request):
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         if user is not None:
             login(request, user)
             return HttpResponseRedirect(reverse('task:tasks'))
         else:
             return render(request, 'account/login.html', {
-                'message': 'Wrong Username and/or Passwort.'
+                'message': 'Wrong Email and/or Passwort.'
             })
     return render(request, 'account/login.html')
 
@@ -114,13 +44,13 @@ def register_view(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
-        confirmation = request.POST.get('confirmation')
+        # confirmation = request.POST.get('confirmation')
         profile_image = request.FILES.get('profile_image')  
 
-        if password != confirmation:
-            return render(request, 'account/register.html', {
-                'message': "Passwords do not match!"
-            })
+        # if password != confirmation:
+        #     return render(request, 'account/register.html', {
+        #         'message': "Passwords do not match!"
+        #     })
         
         try:
             user = CustomUser.objects.create_user(username=username, email=email, password=password)
@@ -324,4 +254,76 @@ def privacy_policy(request):
 
 def terms_and_conditions(request):
     return render(request, 'task/terms.html')
+
+
+def export_to_pdf(request):
+
+    # Créer une réponse HTTP avec un type de contenu PDF 
+    response = HttpResponse(content_type='application/pdf')
+
+    # appeler le fichier 'tasks.pdf' et permettre son télechargement
+    response['Content-Disposition'] = 'atachment; filename="tasks.pdf"'
+
+    # Créer un objet canvas pour le PDF
+    p = canvas.Canvas(response, pagesize=letter)
+    width, height = letter
+
+    # récupération des taches de l'utilisateur
+    tasks = Task.objects.filter(author=request.user)
+
+    #Mettre le nom du site 
+    p.setFont('Helvetica', 8)
+    p.setFillColor(colors.black)
+    p.drawString(20, height - 20, "eMatrix")
+
+    # Ajouter du texte au PDF avec des couleurs
+    y = height - 40  # Position verticale
+    x = width - 50
+    p.setFont("Helvetica-Bold", 16)
+    p.setFillColor(colors.darkblue)
+    p.drawString(100, y, f"Task Lists for {request.user}:")
+    y -= 30
+
+    p.setFont("Helvetica", 12)
+    for task in tasks:
+        p.setFillColor(colors.black)
+        p.drawString(100, y, "Title:")
+        p.setFillColor(colors.green)
+        p.drawString(150, y, task.title)
+        y -= 20
+
+        p.setFillColor(colors.black)
+        p.drawString(100, y, "Priority:")
+        p.setFillColor(colors.red)
+        p.drawString(150, y, task.priority)
+        y -= 20
+
+        p.setFillColor(colors.black)
+        p.drawString(100, y, "Creation Date:")
+        p.setFillColor(colors.blue)
+        p.drawString(200, y, task.created_at.strftime('%Y-%m-%d'))
+        y -= 40
+
+    # Sauvegarder et fermer le PDF
+    p.showPage()
+    p.save()
+
+    return response
+
+
+def export_tasks_csv(request):
+
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="tasks.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Title', 'Priorité', 'Creation date'])  # Header
+    tasks = Task.objects.filter(author=request.user)
+
+    for task in tasks:
+        writer.writerow([task.title, task.priority, task.created_at])
+
+    return response
+
+
     

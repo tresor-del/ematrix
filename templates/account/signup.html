@@ -31,17 +31,17 @@
     </div>
 
     <!-- Confirm Password -->
-    <div class="mb-3">
+    <!-- <div class="mb-3">
         <input placeholder="Confirm the password" type="password" name="confirmation" class="form-control" id="password-confirmation" required>
-    </div>
+    </div> -->
 
     <!-- Terms and Conditions -->
-    <div class="mb-3 form-check">
+    <!-- <div class="mb-3 form-check">
         <input type="checkbox" class="form-check-input" id="terms-checkbox" name="terms" required>
         <label class="form-check-label" for="terms-checkbox">
             I agree to the <a href="{% url 'task:privacy' %}">Privacy Policy</a> and <a href="{% url 'task:terms' %}">Terms of Service</a>.
         </label>
-    </div>
+    </div> -->
 
     {% include 'components/submit_button.html' with button_text="Sign Up" loading_text="Signing Up..." %}
 </form>

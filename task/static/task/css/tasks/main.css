@@ -188,7 +188,51 @@ body {
     padding: 10px 20px;
 }
 
+
+/* Custom File Button Styles */
+
+.custom-file-btn {
+    display: inline-block;
+    padding: 5px;
+    color: var(--text-color);
+    border: 1px solid var(--text-color);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.custom-file-btn:hover {
+    background-color: var(--custom-file-btn-hover);
+}
+
+.file-name {
+    margin-left: 10px;
+    font-size: 1rem;
+    color: var(--secondary-color);
+}
+
+/* Hide File Input Styles */
+
+.hide-img input[type="file"] {
+    display: none;
+}
+
+/********** WELCOME PAGE ************/
+
+.starting-text {
+    font-size: clamp(2rem, 4vw, 4rem); 
+    font-weight: 700;
+    line-height: 1.2; 
+    color: #333; 
+}
+
+.starting-text .logo {
+    color: var(--primary-color);
+    font-weight: 800;
+}
+
+
 /* Media Queries */
+
 @media (min-width: 768px) {
     .eisenhower-matrix .col-md-6 {
         display: flex;
@@ -217,43 +261,4 @@ body {
     }
 }
 
-/* Custom File Button Styles */
-.custom-file-btn {
-    display: inline-block;
-    padding: 5px;
-    color: var(--text-color);
-    border: 1px solid var(--text-color);
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.custom-file-btn:hover {
-    background-color: var(--custom-file-btn-hover);
-}
-
-.file-name {
-    margin-left: 10px;
-    font-size: 1rem;
-    color: var(--secondary-color);
-}
-
-/* Hide File Input Styles */
-.hide-img input[type="file"] {
-    display: none;
-}
-
-/********** WELCOME PAGE ************/
-
-.starting-text {
-    font-size: clamp(2rem, 4vw, 4rem); 
-    font-weight: 700;
-    text-align: center; 
-    line-height: 1.2; 
-    color: #333; 
-}
-
-.starting-text .logo {
-    color: var(--primary-color);
-    font-weight: 800;
-}
 
