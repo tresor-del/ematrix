@@ -95,7 +95,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="export-tasks">
                             <li><a class="dropdown-item" href="{% url 'task:export_tasks_csv' %}" id="export-csv">Export as CSV</a></li>
-                            <li><a class="dropdown-item cursor-pointer"  id="download-png">Export as PNG</a></li>
+                            <li><a class="dropdown-item cursor-pointer"  id="download-png">Export PNG image</a></li>
                         </ul>
                     </li>
 
@@ -265,8 +265,11 @@
             </div>
         </div>
         <div class="text-center p-3 bg-dark text-white">
-            © 2025 eMatrix. All rights reserved.
+            © <span id="current-year"></span> eMatrix. All rights reserved.
         </div>
+        <script>
+            document.getElementById('current-year').textContent == new Date().getFullYear()
+        </script>
     </footer>
 
     <!-- Bootstrap JS -->

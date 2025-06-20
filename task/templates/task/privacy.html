@@ -51,8 +51,12 @@
         </section>
     </main>
     <footer>
-        <p>&copy; 2025 eMatrix. All rights reserved.</p>
+        <p>&copy; <span id="current-year"></span> eMatrix. All rights reserved.</p>
     </footer>
+    <script>
+        // Automatically update the footer year to the current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 
     <style>
         body {

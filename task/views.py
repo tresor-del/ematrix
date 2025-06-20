@@ -107,7 +107,7 @@ def login_view(request):
             return render(request, 'account/login.html', {
                 'message': 'Wrong Username and/or Passwort.'
             })
-    return render(request, 'task/login.html')
+    return render(request, 'account/login.html')
 
 def register_view(request):
     if request.method == 'POST':

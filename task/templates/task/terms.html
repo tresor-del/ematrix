@@ -9,7 +9,7 @@
     <header>
         <h1 style="color: white;">Terms and Conditions</h1>
         <nav>
-            <a href="/">Retour à la page d'accueil</a>
+            <button><a style="color: black;" href="/">Go back</a></button>
         </nav>
     </header>
     <main>
@@ -35,12 +35,16 @@
         </section>
         <section>
             <h2>Contact Us</h2>
-            <p>If you have any questions about these terms, please contact us at support@example.com.</p>
+            <p>If you have any questions about these terms, please contact us at <a target="_blank" href="mailto:tresoradzanto7@gmail.com">tresoradzanto7@gmail.com</a>.</p>
         </section>
     </main>
     <footer>
-        <p>&copy; 2025 eMatrix. All rights reserved.</p>
+        <p>&copy; <span id="current-year"></span> eMatrix. All rights reserved.</p>
     </footer>
+    <script>
+        // Automatically update the footer year to the current year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
     <style>
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
