@@ -5,16 +5,17 @@
 
 /* Variables CSS */
 :root {
-    --background-color: #f1ecec;
+    --background-color: #fff;
     --text-color: rgb(26, 24, 24);
-    --primary-color: #007bff;
-    --header-background: #f8f9fa;
-    --border-color: rgb(90, 84, 84);
+    --primary-color: #4598f1;
+    --header-background: #fff;
+    --border-color: rgb(230, 220, 220);
     --modal-header-color: rgb(116, 116, 240);
-    --secondary-color: #1768b9;
+    --secondary-color: #9fc0e4;
+
     --accent-color: #ffc107;
     --timer-color: #17a2b8;
-    --custom-file-btn-hover: #0056b3;
+    --custom-file-btn-hover: #9fc0e4;
 }
 
 .dark-mode {
@@ -30,10 +31,24 @@
 }
 
 /* Global Styles */
+
+html {
+    box-sizing: border-box;
+}
+
+#responsive-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
 body {
+    
     background-color: var(--background-color);
     color: var(--text-color);
 }
+
+
+
 
 /* Brand Styles */
 .brand {
@@ -120,18 +135,23 @@ body {
 
 .navbar {
     background-color: var(--header-background) !important;
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.navbar .navbar-brand h4{
+  color: #1a73e8;
+  font-weight: 800;
+  font-style: normal;
 }
 
 .navbar li a, #dark-mode-toggle {
     margin-right: 1rem;
-    border-radius: 20px;
-    color: var(--text-color) !important ;
-    text-decoration: none;  
+    text-decoration: none;
 }
 
 .navbar .navbar-nav li a:hover {
-    background-color: var(--secondary-color) !important;
-    color: var(--hover-text-color);  
+    cursor: pointer;
 }
 
 
@@ -218,33 +238,78 @@ body {
 
 /********** WELCOME PAGE ************/
 
+.index {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    height: 100vh;
+}
+
+.index p{
+    font-size: clamp(0.5rem, 4vw, 1rem); 
+}
+
 .starting-text {
-    font-size: clamp(2rem, 4vw, 4rem); 
-    font-weight: 700;
+    font-size: clamp(1rem, 4vw, 3rem); 
+    font-weight: 800;
     line-height: 1.2; 
     color: #333; 
 }
+ 
+.blockquote {
+    font-size: clamp(0.5rem, 4vw, 1rem); 
+}
 
-.starting-text .logo {
+.starting-text .hlg {
     color: var(--primary-color);
     font-weight: 800;
+}
+
+.index-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 600px;
+    height: auto;
+    margin: 20px 0;
+}
+
+.index-img img{
+    width: 350px;
+}
+
+footer {
+    padding: 20px 0px 0px 40px;
+    background-color: #e0d9d9;
+}
+
+footer .footer-link {
+    text-decoration: none;
+    color: var(--text-color);
+    opacity: 0.7;
+}
+
+footer h5 {
+    margin-bottom: 30px !important;
 }
 
 
 /* Media Queries */
 
 @media (min-width: 768px) {
-    .eisenhower-matrix .col-md-6 {
+    .eisenhower-matrix .col-md-6{
         display: flex;
         flex-direction: column;
     }
 }
 
 @media (max-width: 767.98px) {
-    .eisenhower-matrix .col-12 {
+    .eisenhower-matrix .col-12{
         display: flex;
         flex-direction: column;
     }
+
 }
 
 @media (max-width: 768px) {
@@ -259,6 +324,41 @@ body {
     .card1 .body {
         font-size: 1rem;
     }
+    
+    .index {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
 }
 
+@media (max-width: 782px) {
+
+    .index {
+    display: flex;          
+    flex-direction: column; 
+    align-items: center;    
+    justify-content: center; 
+    width: 700px;
+    height: 100vh;
+    margin-top: 100px;
+    gap: 40px;              
+}
+
+.index .container {
+    width: fit-content;
+}
+ 
+.index-img{
+    display: inline;
+    max-width: 300px;
+    height: auto;
+    margin: 20px 0;
+}
+
+.index-img img {
+    width: 200px;
+}
+}
 

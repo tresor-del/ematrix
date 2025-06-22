@@ -1,0 +1,38 @@
+    
+    
+    <div class="offcanvas offcanvas-end offcanvas-color" tabindex="-1" id="offcanvasProfile" aria-labelledby="offcanvasProfileLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasProfileLabel">
+                    <a class="nav-link" href="{% url 'task:logout' %}">
+                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    </a>
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="profile-info" id="profile">
+                <div class="profile-image d-flex justify-content-center">
+                    <div>
+                        {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}" alt="Profile Image" class="border rounded-circle" width="150" height="150">
+                        {% else %}
+                            <img src="../../../media/images/profile.jpg" alt="Profile Image" class="rounded-circle" width="150" height="150">
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="profile-details mt-3 text-center">
+                    <h2>
+                            {% if user.first_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                    </h2>
+                    <p>{{ user.email }}</p>
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-outline-primary" id="bp" data-id="edit-profile">Edit Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

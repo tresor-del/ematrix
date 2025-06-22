@@ -1,0 +1,92 @@
+
+
+
+    <nav class="navbar navbar-expand-lg fixed-top d-flex" style="background-color: transparent;">
+        <div class="container-fluid">
+            <!-- Brand Logo/Name -->
+            <a class="navbar-brand" href="{% url 'task:index' %}">
+                <div class=" d-flex align-items-center">
+                    <h4 class="brand">thematrix</h4>
+                </div>
+            </a>
+
+            <!-- Navbar Toggler -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            {% if user.is_authenticated %}
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <div class="text-center">
+                        <small>Completed Tasks: <span id="c" data-count="{{ completed_task_count }}">{{ completed_task_count }}</span></small> <span class="opacity-25">|</span> 
+                        <small>Pending Tasks: <span id="p" data-count="{{ pending_task_count }}">{{ pending_task_count }}</span></small>
+                    </div>
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Navbar Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link " href="#" id="chart">
+                            <i class="bi bi-bar-chart me-2"></i>Chart
+                        </a>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="export-tasks" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-download me-2"></i>Export Tasks
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="export-tasks">
+                            <li><a class="dropdown-item" href="{% url 'task:export_tasks_csv' %}" id="export-csv">Export as CSV</a></li>
+                            <li><a class="dropdown-item cursor-pointer"  id="download-png">Export PNG image</a></li>
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="theme-toggle" role="button">
+                            <i id="theme-icon"></i>
+                        </a>
+                    </li>
+
+                    <!-- Profile Link -->
+                     {% if user.is_authenticated %}
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" data-bs-toggle="offcanvas" href="#offcanvasProfile" role="button" aria-controls="offcanvasProfile">
+                                {% if user.profile_image %}
+                                    <img src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-circle me-2 border" width="20" height="20">
+                                {% else %}
+                                    <i class="bi bi-person-circle rounded-circle me-2" style="font-size: 20px;"></i>
+                                {% endif %}
+                                {% if user.first_name %}
+                                    {{ user.first_name }}
+                                {% else %}
+                                    {{ user.username }}
+                                {% endif %}
+                                <i class="bi bi-chevron-right ms-2"></i>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="btn btn-primary d-flex align-items-center border" >
+                                Sign In
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-outilne d-flex align-items-center border" >
+                                Sign Up
+                            </a>
+                        </li>
+                    {% endif %}
+                    <script>
+                   </script>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    {% include 'layouts/partials/profile_offcanvas.html' %}
