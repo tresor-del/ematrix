@@ -1,92 +1,181 @@
 
 
 
-    <nav class="navbar navbar-expand-lg fixed-top d-flex" style="background-color: transparent;">
-        <div class="container-fluid">
-            <!-- Brand Logo/Name -->
-            <a class="navbar-brand" href="{% url 'task:index' %}">
-                <div class=" d-flex align-items-center">
-                    <h4 class="brand">thematrix</h4>
-                </div>
-            </a>
+   <nav class="navbar navbar-expand-lg fixed-top d-flex" style="background-color: transparent;">
+    <div class="container-fluid">
 
-            <!-- Navbar Toggler -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            {% if user.is_authenticated %}
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <div class="text-center">
-                        <small>Completed Tasks: <span id="c" data-count="{{ completed_task_count }}">{{ completed_task_count }}</span></small> <span class="opacity-25">|</span> 
-                        <small>Pending Tasks: <span id="p" data-count="{{ pending_task_count }}">{{ pending_task_count }}</span></small>
-                    </div>
-                </ul>
+        <!-- Brand Logo/Name -->
+        <a class="navbar-brand" href="{% url 'task:index' %}">
+            <div class="d-flex align-items-center">
+                <h4 class="brand">QuadraFlow</h4>
+                <!-- <img src="../../../../media/images/logo3.png" alt="" > -->
             </div>
-            {% endif %}
+        </a>
 
-            <!-- Navbar Links -->
-            <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Navbar Toggler - Main toggle for mobile offcanvas -->
+
+        <button class="navbar-toggler-btn d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#navbarOffcanvas" aria-controls="navbarOffcanvas">
+            <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 7.5H25M5 15H25M5 22.5H25" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+
+        <!-- Offcanvas for mobile menu -->
+        <div class="offcanvas offcanvas-end d-lg-none" tabindex="-1" id="navbarOffcanvas" aria-labelledby="navbarOffcanvasLabel">
+            <div class="offcanvas-header d-flex justify-content-between align-items">
+                <h5 class="offcanvas-title" id="navbarOffcanvasLabel">Menu</h5>
+                <button type="button" class="btn-close-custom" data-bs-dismiss="offcanvas" aria-label="Close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="#FF0000" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="offcanvas-body">
+                {% if user.is_authenticated %}
+                <div class="text-center mb-3 d-lg-none">
+                    <small>Completed Tasks: <span id="c" data-count="{{ completed_task_count }}">{{ completed_task_count }}</span></small> 
+                    <span class="opacity-25">|</span> 
+                    <small>Pending Tasks: <span id="p" data-count="{{ pending_task_count }}">{{ pending_task_count }}</span></small>
+                </div>
+                {% endif %}
+
                 <ul class="navbar-nav ms-auto">
-
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link " href="#" id="chart">
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link" href="#" id="chart">
                             <i class="bi bi-bar-chart me-2"></i>Chart
                         </a>
                     </li>
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="export-tasks" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-download me-2"></i>Export Tasks
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link" href="{% url 'task:export_tasks_csv' %}" id="export-csv">
+                            <i class="bi bi-download me-2"></i>Export as CSV
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="export-tasks">
-                            <li><a class="dropdown-item" href="{% url 'task:export_tasks_csv' %}" id="export-csv">Export as CSV</a></li>
-                            <li><a class="dropdown-item cursor-pointer"  id="download-png">Export PNG image</a></li>
-                        </ul>
+                    </li>
+                    <li class="nav-item d-lg-none">
+                        <a class="nav-link cursor-pointer" id="download-png">
+                            <i class="bi bi-download me-2"></i>Export PNG image
+                        </a>
                     </li>
                     {% endif %}
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="theme-toggle" role="button">
-                            <i id="theme-icon"></i>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" class="theme-toggle">
+                            <i class="theme-icon"></i>
                         </a>
                     </li>
 
-                    <!-- Profile Link -->
-                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center" data-bs-toggle="offcanvas" href="#offcanvasProfile" role="button" aria-controls="offcanvasProfile">
-                                {% if user.profile_image %}
-                                    <img src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-circle me-2 border" width="20" height="20">
-                                {% else %}
-                                    <i class="bi bi-person-circle rounded-circle me-2" style="font-size: 20px;"></i>
-                                {% endif %}
-                                {% if user.first_name %}
-                                    {{ user.first_name }}
-                                {% else %}
-                                    {{ user.username }}
-                                {% endif %}
-                                <i class="bi bi-chevron-right ms-2"></i>
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="btn btn-primary d-flex align-items-center border" >
-                                Sign In
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="btn btn-outilne d-flex align-items-center border" >
-                                Sign Up
-                            </a>
-                        </li>
-                    {% endif %}
-                    <script>
-                   </script>
+                    {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" data-bs-toggle="offcanvas" href="#offcanvasProfile" role="button" aria-controls="offcanvasProfile">
+                        {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-circle me-2 border" width="20" height="20">
+                        {% else %}
+                            <i class="bi bi-person-circle rounded-circle me-2" style="font-size: 20px;"></i>
+                        {% endif %}
+                        {% if user.first_name %}
+                            {{ user.first_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                        <i class="bi bi-chevron-right ms-2"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="btn btn-primary d-flex align-items-center border mb-2">
+                        Sign In
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline d-flex align-items-center border">
+                        Sign Up
+                    </a>
+                </li>
+                {% endif %}
+
+                    <!-- Desktop version (hidden on mobile) -->
+                    <div class="d-none d-lg-flex">
+                        {% if user.is_authenticated %}
+                        <div class="text-center">
+                            <small>Completed Tasks: <span id="c-lg" data-count="{{ completed_task_count }}">{{ completed_task_count }}</span></small> 
+                            <span class="opacity-25">|</span> 
+                            <small>Pending Tasks: <span id="p-lg" data-count="{{ pending_task_count }}">{{ pending_task_count }}</span></small>
+                        </div>
+                        {% endif %}
+                    </div>
                 </ul>
             </div>
         </div>
-    </nav>
+
+        <!-- Desktop Navbar Links (hidden on mobile) -->
+        <div class="collapse navbar-collapse d-none d-lg-block" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                <div class="text-center">
+                    <small>Completed Tasks: <span id="c" data-count="{{ completed_task_count }}">{{ completed_task_count }}</span></small> 
+                    <span class="opacity-25">|</span> 
+                    <small>Pending Tasks: <span id="p" data-count="{{ pending_task_count }}">{{ pending_task_count }}</span></small>
+                </div>
+                {% endif %}
+            </ul>
+            
+            <ul class="navbar-nav ms-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="#" id="chart">
+                        <i class="bi bi-bar-chart me-2"></i>Chart
+                    </a>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="export-tasks" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-download me-2"></i>Export Tasks
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="export-tasks">
+                        <li><a class="dropdown-item" href="{% url 'task:export_tasks_csv' %}" id="export-csv">Export as CSV</a></li>
+                        <li><a class="dropdown-item cursor-pointer" id="download-png">Export PNG image</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                <li class="nav-item">
+                        <a class="nav-link" href="#" class="theme-toggle">
+                            <i class="theme-icon"></i>
+                        </a>
+                    </li>
+
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center" data-bs-toggle="offcanvas" href="#offcanvasProfile" role="button" aria-controls="offcanvasProfile">
+                        {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}" alt="Profile Image" class="rounded-circle me-2 border" width="20" height="20">
+                        {% else %}
+                            <i class="bi bi-person-circle rounded-circle me-2" style="font-size: 20px;"></i>
+                        {% endif %}
+                        {% if user.first_name %}
+                            {{ user.first_name }}
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                        <i class="bi bi-chevron-right ms-2"></i>
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="btn btn-primary d-flex align-items-center border">
+                        Sign In
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="btn btn-outline d-flex align-items-center border">
+                        Sign Up
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
 
     {% include 'layouts/partials/profile_offcanvas.html' %}

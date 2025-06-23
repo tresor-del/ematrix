@@ -6,7 +6,11 @@
 /* Variables CSS */
 :root {
     --background-color: #fff;
+
+    --t-bg: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(255, 255, 255, 1) 0%, rgba(191, 191, 227, 1) 47%, rgba(255, 255, 255, 1) 86%);
+
     --text-color: rgb(26, 24, 24);
+    --footer-bg: #c5bbbb;
     --primary-color: #4598f1;
     --header-background: #fff;
     --border-color: rgb(230, 220, 220);
@@ -22,7 +26,9 @@
     --background-color: #121212;
     --text-color: #e0e0e0;
     --header-background: #1f1f1f;
+    --t-bg: linear-gradient(90deg,rgba(18, 18, 18, 1) 12%, rgba(74, 70, 70, 1) 48%, rgba(18, 18, 18, 1) 74%);
     --border-color: #333;
+    --footer-bg: #444242;
     --modal-header-color: #3a3a3a;
     --secondary-color: #757575;
     --accent-color: #ffca28;
@@ -148,10 +154,37 @@ body {
 .navbar li a, #dark-mode-toggle {
     margin-right: 1rem;
     text-decoration: none;
+    color: var(--text-color);
 }
 
 .navbar .navbar-nav li a:hover {
     cursor: pointer;
+}
+
+/* Offcanvas for mobile menu */
+
+.offcanvas {
+    background-color: var(--header-background);
+    color: var(--text-color);
+}
+
+#theme-icon {
+    color: var(--text-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.btn-close-custom {
+    border: none;
+    background: transparent;
+    padding: 0.5rem;
+    float: right;
+}
+
+.navbar-toggler-btn {
+    background-color: var(--header-background);
+    border: none;
+    color: var(--text-color);
 }
 
 
@@ -244,6 +277,7 @@ body {
     justify-content: center;
     padding: 20px;
     height: 100vh;
+    gap: 40px;
 }
 
 .index p{
@@ -251,14 +285,20 @@ body {
 }
 
 .starting-text {
-    font-size: clamp(1rem, 4vw, 3rem); 
+    font-size: clamp(2rem, 4vw, 2.5rem); 
+    background: #020024;
+    background: var(--t-bg);
     font-weight: 800;
+    padding-top: 20px;
+    padding-bottom: 20px;
     line-height: 1.2; 
-    color: #333; 
+    color: var(--text-color); 
 }
  
-.blockquote {
+.blockquote p{
     font-size: clamp(0.5rem, 4vw, 1rem); 
+    color: var(--text-color) !important;
+    opacity: 0.8 !important;
 }
 
 .starting-text .hlg {
@@ -276,12 +316,17 @@ body {
 }
 
 .index-img img{
-    width: 350px;
+    width: 400px;
 }
 
 footer {
     padding: 20px 0px 0px 40px;
-    background-color: #e0d9d9;
+    background-color: var(--footer-bg);
+    color: var(--text-color);
+}
+
+footer .muted {
+    opacity: 0.7;
 }
 
 footer .footer-link {
@@ -339,15 +384,16 @@ footer h5 {
     display: flex;          
     flex-direction: column; 
     align-items: center;    
-    justify-content: center; 
-    width: 700px;
+    justify-content: center;
     height: 100vh;
     margin-top: 100px;
+    margin-bottom: 100px;
     gap: 40px;              
 }
 
 .index .container {
     width: fit-content;
+    order: 2;
 }
  
 .index-img{
@@ -358,7 +404,7 @@ footer h5 {
 }
 
 .index-img img {
-    width: 200px;
+    width: 300px;
 }
 }
 

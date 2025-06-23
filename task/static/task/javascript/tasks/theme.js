@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const body = document.getElementById('body');
     const navbar = document.querySelector('.navbar');
     const themeToggle = document.getElementById('theme-toggle');
-    const themeIcon = document.getElementById('theme-icon');
+    const themeIcon = document.getElementsByClassName('theme-icon');
 
     if (!body || !navbar || !themeToggle || !themeIcon) {
         console.warn('Required elements for theme toggle are missing.');
@@ -11,9 +11,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Fonction pour mettre à jour l'icône et le texte
     function updateThemeUI(isDarkMode) {
-        themeIcon.classList.remove('bi-sun', 'bi-moon');
-        themeIcon.classList.add(isDarkMode ? 'bi-moon' : 'bi-sun');
-        themeToggle.innerHTML = `<i id="theme-icon" class="${isDarkMode ? 'bi-moon' : 'bi-sun'}"></i>   `;
+        Array.from(themeIcon).forEach(icon => {
+            icon.classList.remove('bi-sun', 'bi-moon');
+            icon.classList.add(isDarkMode ? 'bi-moon' : 'bi-sun');
+        });
+        themeToggle.innerHTML = `<i class="theme-icon ${isDarkMode ? 'bi-moon' : 'bi-sun'}"></i>`;
     }
 
     // Appliquer le thème selon localStorage
