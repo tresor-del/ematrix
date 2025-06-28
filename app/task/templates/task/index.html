@@ -1,0 +1,32 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}   
+    <div class="index" >
+        <div class="c">
+            <h3 class="starting-text"> Organize your tasks using the <span class="hlg">Eisenhower Matrix </span> and  boost your productivity.</h3>
+            <blockquote class="blockquote text-muted mt-4">
+            <p>"What is important is seldom urgent and what is urgent is seldom important." </p>
+            <p id="quote-footer" class="blockquote-footer text-muted m-1">Dwight D. Eisenhower</p>
+            </blockquote>
+            <div class="index-google-btn" >
+                {% include "components/google_button.html" with button_text="Login with Google" loading_text="Signing In..." %}
+            </div>
+        </div>
+
+        <div class="index-img">
+            <img src="../../../media/images/im.png" alt="">
+        </div>
+    </div>
+    <div class="screeshots index2">
+        <div class="text text-center">
+            <h2>Classify your benefits into four quadrants</h2>
+        </div>
+
+        <div class="screeshots-img">
+            <img src="../../../media/images/s1.png" alt="" >
+            <img src="../../../media/images/s2.png" alt="" >
+            <img src="../../../media/images/s3.png" alt="" >
+            <img src="../../../media/images/s4.png" alt="" >
+        </div>
+    </div>
+{% endblock %}

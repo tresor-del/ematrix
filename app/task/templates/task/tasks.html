@@ -1,0 +1,111 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+<div id="content" style="margin-top: 10px; ">
+    <div class="row">
+        {% for cat in categories %}
+        <div class="col-md-3 col-12 mb-3 mb-lg-3">
+            <div class="card rounded-0 {{ cat.class }} dark-mode-card"
+                 style="border-left: 5px solid {{ cat.border }} !important; border: 1px solid {{ cat.border2 }};">
+                <div class="card-header bg-none">
+                    <div class="d-flex justify-content-between">
+                       <h6>{{ cat.title }}</h6>
+                        <button class="btn p-0 m-0 dropdown-toggle q-btn menu" type="button" id="maindropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <ul class="dropdown-menu q-ul" aria-labelledby="maindropdownMenuButton">
+                            <li><a class="dropdown-item mark-all-task-completed" data-desc="{{ cat.priority }}" href="#" style='cursor: pointer;'>Mark all tasks as completed</a></li>
+                            <li><a class="dropdown-item text-danger delete-all-tasks" data-desc="{{ cat.priority }}" data-status="true" href="#" style='cursor: pointer;'>Delete All Tasks</a></li>
+                        </ul>
+                    </div>
+                    
+                    <p class="mb-0" style="font-size: x-small;">{{ cat.desc }}</p>
+                </div>
+                <div id="{{ cat.priority }}" class="card-body overflow-auto" style="height: 450px;">
+                    <form class="task-form" action="{% url 'task:new_task' %}" method="post">
+                        <input type="text" class="w-100 rounded-0 mb-5" name="title" placeholder="Add task...">
+                        <input type="hidden" name="priority" value="{{ cat.priority }}">
+                        <button type="submit" class="d-none"></button>
+                    </form>
+                    {% for task in cat.tasks %}
+                    <div data-id="{{ task.id }}" class="task-item d-flex justify-content-between border rounded mb-1 p-1" style="background-color:{{ cat.color }} !important;">
+                        <p class="p-0 m-0">
+                            <i class="bi bi-plus-lg m-1" id="move"></i>
+                            <span class="task-title{% if cat.class == 'urgent-important' %} start-focus{% endif %}" style="cursor: pointer;" data-id="{{ task.id }}" data-title="{{ task.title }}">
+                                <button class="btn m-0 p-0 text-truncate" style="max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" data-bs-toggle="modal" data-bs-target="#taskModal{{ task.id }}"></button>
+                                    {% if task.completed %}
+                                        <del class="opacity-50">{{ task.title }}</del>
+                                    {% else %}
+                                        {{ task.title }}
+                                    {% endif %}
+                                </button>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="taskModal{{ task.id }}" tabindex="-1" aria-labelledby="taskModalLabel{{ task.id }}" aria-hidden="true">
+                                  <div class="modal-dialog">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="taskModalLabel{{ task.id }}">Task Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <p><strong>Title:</strong> {{ task.title }}</p>
+                                        <p><strong>Status:</strong> {% if task.completed %}Completed{% else %}Pending{% endif %}</p>
+                                        <p><strong>Description :</strong>{{ task.description }}</p>
+                                        <p><strong>Created :</strong>{{ task.created_at }}</p>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            </span>
+                        </p>
+                        <div class="d-flex">
+                            {% if task.completed %}
+                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="true">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="display: none;">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="true" href="#" style='cursor: pointer;'>Delete</a></li>
+                            </ul>
+                            {% else %}
+                            <button data-id="{{ task.id }}" class="dropdown-btn o delete-task btn p-0 m-0" data-status="false" style="display: none;">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <button class="btn p-0 m-0 dropdown-toggle menu" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li><a class="dropdown-item start-focus" data-id="{{ task.id }}" href="#" style='cursor: pointer;'>Focus mode</a></li>
+                                <li><a class="dropdown-item text-danger delete-task" data-id="{{ task.id }}" data-status="false" href="#" style='cursor: pointer;'>Delete</a></li>
+                            </ul>
+                            {% endif %}
+                            <button class="change-status" style="background-color: transparent; border: none;" data-id="{{ task.id }}" data-title="{{ task.title }}" data-status="{% if task.completed %}Pending{% else %}Completed{% endif %}">
+                                <i class="bi {% if task.completed %}bi-arrow-clockwise{% else %}bi-check2{% endif %} m-1"></i>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+<div class="card-footer m-0 p-0">
+    <p class="text-center p-1">
+        {{ cat.tasks.count }} tasks
+    </p>
+</div>
+
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Section to inject modals dynamically via JavaScript -->
+<div id="modal-body-content"></div>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+    
+    
+    <div class="offcanvas offcanvas-end offcanvas-color" tabindex="-1" id="offcanvasProfile" aria-labelledby="offcanvasProfileLabel">
+        <div class="offcanvas-header d-flex justify-content-between">
+            <h5 class="offcanvas-title" id="offcanvasProfileLabel">
+                    <a class="nav-link" href="{% url 'task:logout' %}">
+                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                    </a>
+            </h5>
+            {% include 'layouts/partials/close.html' with bs='offcanvas' %}
+        </div>
+        <div class="offcanvas-body">
+            <div class="profile-info" id="profile">
+                <div class="profile-image ">
+                    <div>
+                        {% if user.profile_image %}
+                            <img src="{{ user.profile_image.url }}" alt="Profile Image" class="border rounded-circle" >
+                        {% else %}
+                            <img src="../../../media/images/profile.jpg" alt="Profile Image" class="rounded-circle" >
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="profile-details">
+                    <h2>
+                            {% if user.first_name %}
+                                {{ user.first_name }} {{ user.last_name }}
+                            {% else %}
+                                {{ user.username }}
+                            {% endif %}
+                    </h2>
+                    <p>{{ user.email }}</p>
+                    
+                </div>
+            </div>
+
+                <div class="mt-3">
+                     <a href="#" class="d-flex  align-items-center" id="bp" data-id="edit-profile">
+                      <i class="bi bi-pencil-square me-2"></i> Edit Profile
+                     </a>
+                </div>
+        </div>
+    </div>

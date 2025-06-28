@@ -1,0 +1,35 @@
+{% extends 'layouts/layout.html' %}
+
+{% block body %}
+
+{% if messages %}
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        {% for message in messages %}
+            <div class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">Notification</strong>
+                    <small>Just now</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                    <p>{{ message }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <script>
+        document.querySelectorAll('.toast').forEach(toastNode => {
+            const toast = new bootstrap.Toast(toastNode);
+            toast.show();
+        });
+    </script>
+{% endif %}
+
+
+
+<script src="../../static/task/javascript/tasks/profile.js"></script>
+
+<!-- Modal Template -->
+<div class="modal-body" id="modal-body-content"></div>
+
+{% endblock %}
