@@ -1,8 +1,0 @@
-<button type="submit" class="btn btn-primary w-100" id="submit-button">{{ button_text }}</button>
-    <script>
-        document.getElementById('login-form').addEventListener('submit', function() {
-            document.getElementById('submit-button').innerText = '{{ loading_text }} ';
-            document.getElementById('submit-button').disabled = true;
-            document.getElementById('title').innerText = '{{ loading_text }}';
-        });
-    </script>
